@@ -1,4 +1,4 @@
-Interactive functions (Shiny apps) for standard analysis of insect sounds, including apps for:
+Interactive functions (Shiny apps) for standard analysis of insect sounds, including:
 
 Pre-processing:
 
