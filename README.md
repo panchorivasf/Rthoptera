@@ -25,3 +25,9 @@ Analysis
 -Oscillogram: Standard oscillogram + interactive oscillogram
 
 -Multi-oscillogram: Standard multi-species oscillogram stack plot.
+
+
+How to install:
+1) Download the ZIP file from the top right corner and unzip it in your directory of preference. 
+2) Install devtools if not already installed: install.packages('devtools').
+3) Install Rthoptera: devtools::install("path/to/Rthoptera"). Add the path to the directory where you stored the package. 
