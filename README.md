@@ -28,6 +28,7 @@ Analysis
 
 
 How to install:
-1) Download the ZIP file from the top right corner and unzip it in your directory of preference. 
-2) Install devtools if not already installed: install.packages('devtools').
-3) Install Rthoptera: devtools::install("path/to/Rthoptera"). Add the path to the directory where you stored the package. 
+1) install.packages("githubinstall")
+2) library(githubinstall)
+3) githubinstall("Rthoptera")
+4) library(Rthoptera)
