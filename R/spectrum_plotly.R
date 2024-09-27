@@ -164,7 +164,7 @@ spectrum_plotly <- function(wave,
   )
 
   summary_df <- summary_df %>%
-    mutate(bandw = round(high.f-low.f),2)
+    mutate(bandw = round(high.f-low.f,2))
 
 
   plot.title <- if (italic.title) {

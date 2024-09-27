@@ -18,3 +18,5 @@ Imports:
     dplyr,
     tidyr,
     patchwork
+Depends: 
+    R (>= 2.10)
