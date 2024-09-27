@@ -1,0 +1,100 @@
+---
+title: "Introduction to Rthoptera"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to Rthoptera}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Rthoptera)
+```
+
+---
+title: "Introduction to Rthoptera"
+author: "Your Name"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to Rthoptera}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction to Rthoptera
+
+**Rthoptera** is an R package that provides interactive Shiny applications for standard analysis of insect sounds. It offers tools for pre-processing, spectral and temporal analysis, as well as interactive visualization of oscillograms and spectrograms. This package aims to simplify the process of importing, processing, and analyzing insect sound recordings in a user-friendly interface using standardized plotting and measurements. 
+
+## Pre-processing
+
+The package offers several pre-processing tools that allow you to handle audio files before performing detailed analysis:
+
+- **Import**: Browse your local data to import audio files (WAV) as Wave objects into R. During this process, all audio files are automatically corrected for DC offset to ensure accurate analysis.
+  
+- **Downsample**: When required, you can reduce the sampling rate of your audio files. This helps improve the computing speed for certain analyses and plots without losing important sound features.
+  
+- **High-pass Filter**: When necessary, apply a user-defined high-pass filter to eliminate low-frequency noise from your audio recordings. This is useful for removing unwanted background noise.
+  
+- **Trim**: Using an interactive oscillogram, you can visually select and trim specific sections of a Wave object. The trimmed sections can be saved as new Wave objects in your R environment for further analysis.
+
+## Analysis
+
+Once pre-processing is complete, Rthoptera offers a range of analysis tools to extract spectral and temporal statistics from your audio files:
+
+- **Spectral Statistics**: Automatically calculate spectral metrics based on the mean power spectrum of a Wave object. These statistics provide insights into the frequency domain of the audio signal.
+
+- **Temporal Statistics**: Automatically extract temporal metrics from your audio recordings. This includes identifying and analyzing peaks (pulses), trains (syllables), and echemes (groups of syllables or trills) in the insect sounds.
+
+- **Multi-Power Spectra**: An interactive tool that overlays multiple power spectra on a color-coded oscillogram, allowing for easy comparison and visualization of spectral features across different time intervals.
+
+- **Spectrogram**: Generate standard spectrograms alongside a lateral mean power spectrum. This combination allows you to visualize both time-frequency representations and the overall spectral distribution.
+
+- **Multi Plot**: A combined visualization of the spectrogram and oscillogram, providing a comprehensive view of both the time-domain and frequency-domain characteristics of the insect sounds.
+
+- **Oscillogram**: Create standard oscillograms as well as interactive oscillograms that allow you to zoom in and explore specific sections of the waveform.
+
+- **Multi-oscillogram**: Create a stacked oscillogram plot for comparing the sounds of multiple species. This is particularly useful for analyzing the differences in acoustic patterns between species.
+
+## Installation
+
+To install the Rthoptera package, follow these steps:
+
+1. Install the `remotes` package if you haven't already:
+
+    ```r
+    install.packages("remotes")
+    ```
+
+2. Load the `remotes` package:
+
+    ```r
+    library(remotes)
+    ```
+
+3. Install **Rthoptera** from GitHub:
+
+    ```r
+    remotes::install_github("panchorivasf/Rthoptera")
+    ```
+
+4. Load the **Rthoptera** package:
+
+    ```r
+    library(Rthoptera)
+    ```
+
+Now, you're ready to start exploring the interactive tools and analyses available in **Rthoptera**.
+
+## Example
+
+Once you have the package installed, you can launch any of the Shiny applications to interactively process and analyze your insect sound recordings. For example, you can run the import tool like this:
+
+```r
+import_wave_app()
