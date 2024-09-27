@@ -28,7 +28,7 @@ Analysis
 
 
 How to install:
-1) install.packages("githubinstall")
-2) library(githubinstall)
-3) githubinstall("Rthoptera")
+1) install.packages("remotes")
+2) library(remotes)
+3) remotes::install_github("panchorivasf/Rthoptera")
 4) library(Rthoptera)
