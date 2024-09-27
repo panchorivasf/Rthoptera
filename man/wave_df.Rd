@@ -2,7 +2,7 @@
 % Please edit documentation in R/wave_df.R
 \name{wave_df}
 \alias{wave_df}
-\title{Wave Data Frame}
+\title{Extract the waveform values as a table}
 \usage{
 wave_df(wave, norm = TRUE)
 }
@@ -15,7 +15,7 @@ wave_df(wave, norm = TRUE)
 A tibble data frame.
 }
 \description{
-Wave Data Frame
+Extract the waveform values as a table
 }
 \examples{
 wave_df(wave, norm = TRUE)

@@ -1,4 +1,4 @@
-#' Wave Data Frame
+#' Extract the waveform values as a table
 #'
 #' @param wave A Wave object.
 #' @param norm Logical. If true, the amplitude values are rescaled to a range of [-1,1].

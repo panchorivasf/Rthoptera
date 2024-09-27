@@ -11,7 +11,7 @@
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter mutate select row_number pull
 #' @importFrom shinycssloaders withSpinner
-#' @export
+#' @noRd
 #'
 #' @examples
 #' if (interactive()) {
@@ -291,7 +291,6 @@ multi_meanspectra_static_app <- function(){
     shinyjs::runjs("window.close();")
     stopApp()
   })
-
 
   shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
 }

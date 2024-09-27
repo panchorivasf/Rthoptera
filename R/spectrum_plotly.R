@@ -45,23 +45,22 @@ spectrum_plotly <- function(wave,
                             freq.res = 50,
                             db.shade = TRUE,
                             ovlp = 0,
-                            fun = c("mean", "median", "var", "sd"),
-                            wn = c("hanning", "bartlett", "blackman",
-                                   "flattop", "hamming", "rectangle"),
+                            fun = "mean",
+                            wn = "blackman",
                             total.bandwidth = FALSE,
                             limit.indices = FALSE,
                             plot.title = "",
-                            italic.title = FALSE,
-                            fmin = NULL,
+                            italic.title = TRUE,
+                            fmin = 0,
                             fmax = NULL,
                             add.params = FALSE,
-                            add.summary = TRUE,
-                            x.breaks = 6,
-                            y.position = c("left", "right"),
-                            x.position = c("bottom", "top"),
+                            add.summary = FALSE,
+                            x.breaks = 10,
+                            y.position = "left",
+                            x.position = "bottom",
                             show.x.title = TRUE,
                             show.y.title = TRUE,
-                            color.db = "grey30",
+                            color.db = "grey",
                             color.linear = 'black',
                             color.carrier = "white",
                             color.threshold = "white",
@@ -74,10 +73,6 @@ spectrum_plotly <- function(wave,
 
   if (wl %% 2 == 1) { wl <- wl + 1 }
 
-  y.position <- match.arg(y.position)
-  x.position <- match.arg(x.position)
-  fun <- match.arg(fun)
-  wn <- match.arg(wn)
 
   if (is.null(fmax) || fmax == 0) {
     fmax <- wave@samp.rate / 2 / 1000  # Convert to kHz
@@ -121,6 +116,12 @@ spectrum_plotly <- function(wave,
 
   carrier_freq <- meanspec_data$freq[which.max(meanspec_data$mean_amp_linear)]
 
+  # Define title font style based on italic.title
+  # title_font_style <- if (italic.title) {
+  #   list(size = 18, family = "Arial", color = "black", face = "italic")
+  # } else {
+  #   list(size = 18, family = "Arial", color = "black")
+  # }
 
   # Extract "Low" and "High" frequencies based on amplitude threshold (0.1 or -20 dB below the peak)
   if (total.bandwidth) {
@@ -166,6 +167,9 @@ spectrum_plotly <- function(wave,
     mutate(bandw = round(high.f-low.f),2)
 
 
+  plot.title <- if (italic.title) {
+    paste0("<i>", plot.title, "</i>")
+  }
 
 
   if(db.shade){
@@ -173,20 +177,24 @@ spectrum_plotly <- function(wave,
       add_ribbons(ymin = 0, ymax = ~meanspec_data$norm_amp_dB,
                   fillcolor = color.db,
                   line = list(color = color.db),
-                  opacity = 0.9,
-                  name = "Scaled dB") %>%
+                  opacity = 0.7,
+                  name = "Scaled dB",
+                  hoverinfo = "x+y",
+                  hovertemplate = "<b>Frequency:</b> %{x:.1f} kHz<br><b>Amplitude:</b>%{y:.3f}<br>") %>%
       add_ribbons(ymin = 0, ymax = ~meanspec_data$mean_amp_linear,
                   fillcolor = color.linear,
                   line = list(color = color.linear),
-                  opacity = 0.9,
-                  name = "Linear") %>%
+                  opacity = 0.7,
+                  name = "Scaled Linear",
+                  hoverinfo = "x+y",
+                  hovertemplate = "<b>Frequency:</b> %{x:.1f} kHz<br><b>Amplitude:</b>%{y:.1f}<br>") %>%
       layout(
-        title = plot.title,
+        title = list(text = plot.title),
         xaxis = list(title = if (show.x.title) "Frequency (kHz)" else NULL,
                      range = c(fmin, fmax),
-                     tickvals = scales::breaks_pretty(n = x.breaks)(c(fmin, fmax)),
-                     tickformat = ".1f"),
-        yaxis = list(title = "Amplitude",
+                     tickvals = seq(fmin, fmax, length.out = x.breaks),
+                     tickformat = ".0f"),
+        yaxis = list(title = "Relative Amplitude",
                      range = c(0, 1),
                      tickvals = seq(0, 1, by = 0.2)),
         showlegend = FALSE
@@ -200,11 +208,11 @@ spectrum_plotly <- function(wave,
                   opacity = 0.9,
                   name = "Linear") %>%
       layout(
-        title = plot.title,
+        title = list(text = plot.title),
         xaxis = list(title = if (show.x.title) "Frequency (kHz)" else NULL,
                      range = c(fmin, fmax),
-                     tickvals = scales::breaks_pretty(n = x.breaks)(c(fmin, fmax)),
-                     tickformat = ".1f"),
+                     tickvals = seq(fmin, fmax, length.out = x.breaks),
+                     tickformat = ".0f"),
         yaxis = list(title = "Amplitude",
                      range = c(0, 1),
                      tickvals = seq(0, 1, by = 0.2)),
@@ -280,5 +288,5 @@ spectrum_plotly <- function(wave,
       )
   }
 
-  return(spectrum_plot)
+  return(list(plot = spectrum_plot, summary = summary_df))
 }

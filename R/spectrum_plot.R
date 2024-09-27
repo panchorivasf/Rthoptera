@@ -1,4 +1,4 @@
-#' Spectrum Plot with Customizable Options
+#' Spectrum Plot
 #'
 #' This function generates a spectrum plot with various customizable options, including window size, color schemes, and the ability to display statistical summaries and frequency markers. The plot can display both dB and linear amplitude scales, and bandwidths based on thresholds can be shown.
 #'
@@ -29,11 +29,10 @@
 #' @param show.lines Logical, whether to show lines for the carrier frequency and bandwidths. Default is `FALSE`.
 #'
 #' @return A list containing a ggplot2 object for the spectrum plot.
-#' @export
 #' @import ggplot2
 #' @importFrom seewave meanspec spec sh sfm
 #' @importFrom scales breaks_pretty label_number
-
+#' @noRd
 #'
 #' @examples
 #' spectrum_plot(wave, win.size = 512, x.breaks = 5, fmin = 1, fmax = 10)
@@ -41,17 +40,16 @@ spectrum_plot <- function(wave,
                            win.size = NULL,
                            ovlp = 50,
                            x.breaks = 6,
-                           y.position = c("left","right"),
-                           x.position = c("top", "bottom"),
+                           y.position = "left",
+                           x.position = "bottom",
                            flip = FALSE,
                            color.db = "grey30",
                            color.linear = 'black',
                            color.carrier = "white",
                            color.threshold = "white",
                            color.bandwidth = "white",
-                           fun = c("mean", "median", "var", "sd"),
-                           wn = c("bartlett", "blackman", "flattop",
-                                  "hamming", "hanning", "rectangle"),
+                           fun = "mean",
+                           wn = "blackman",
                            show.x.title = TRUE,
                            show.y.title = TRUE,
                            add.params = FALSE,
@@ -84,11 +82,6 @@ spectrum_plot <- function(wave,
 
   }
 
-
-  y.position <- match.arg(y.position)
-  x.position <- match.arg(x.position)
-  fun <- match.arg(fun)
-  wn <- match.arg(wn)
 
   # Automatically set fmax to Nyquist frequency if not provided
   if (is.null(fmax) || fmax == 0) {

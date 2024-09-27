@@ -301,17 +301,36 @@ multi_meanspectra_app <- function() {
 
     observeEvent(input$add_selection, {
       req(input$wave_brush)
+
+      # Round xmin and xmax to avoid floating-point precision issues
       brush <- input$wave_brush
+      brush$xmin <- round(brush$xmin, 3)
+      brush$xmax <- round(brush$xmax, 3)
+
+      # Validate that xmin < xmax
+      if (brush$xmin >= brush$xmax) {
+        showModal(modalDialog(
+          title = "Invalid Selection",
+          "The selection is invalid. Please try again.",
+          easyClose = TRUE,
+          footer = modalButton("OK")
+        ))
+        return(NULL)
+      }
+
       brush_data <- brushed_ranges()
       brush_data <- append(brush_data, list(c(brush$xmin, brush$xmax)))
       brushed_ranges(brush_data)
 
       wave <- selected_wave()
       range <- c(brush$xmin, brush$xmax)
-      spec <- spectrum_df(wave, from = range[1], to = range[2], wl = as.numeric(input$wl))
-      spec$amplitude <- spec$amplitude * max(wave_df(wave) %>% dplyr::filter(time >= range[1] & time <= range[2]) %>% pull(amplitude))
-      colors <- brush_colors()
 
+      spec <- spectrum_df(wave, from = range[1], to = range[2], wl = as.numeric(input$wl))
+      spec$amplitude <- spec$amplitude * max(wave_df(wave) %>%
+                                               dplyr::filter(time >= range[1] & time <= range[2]) %>%
+                                               pull(amplitude))
+
+      colors <- brush_colors()
       selection_number <- length(brush_data)
       selection_name <- paste("Selection", selection_number)
 
@@ -320,8 +339,8 @@ multi_meanspectra_app <- function() {
           x = spec$frequency, y = spec$amplitude, type = 'scatter',
           mode = 'none',
           fill = 'tozeroy',
-          fillcolor = toRGB(colors[selection_number],
-                            alpha = input$alpha), name = selection_name,
+          fillcolor = toRGB(colors[selection_number], alpha = input$alpha),
+          name = selection_name,
           hovertemplate = 'Amplitude: %{y:.2f}'
         ))
 
@@ -334,6 +353,42 @@ multi_meanspectra_app <- function() {
                   hovertemplate = 'Amplitude: %{y:.2f}', line = list(color = 'rgba(0,0,0,0)'))
       plotly_obj(p)
     })
+
+    # observeEvent(input$add_selection, {
+    #   req(input$wave_brush)
+    #   brush <- input$wave_brush
+    #   brush_data <- brushed_ranges()
+    #   brush_data <- append(brush_data, list(c(brush$xmin, brush$xmax)))
+    #   brushed_ranges(brush_data)
+    #
+    #   wave <- selected_wave()
+    #   range <- c(brush$xmin, brush$xmax)
+    #   spec <- spectrum_df(wave, from = range[1], to = range[2], wl = as.numeric(input$wl))
+    #   spec$amplitude <- spec$amplitude * max(wave_df(wave) %>% dplyr::filter(time >= range[1] & time <= range[2]) %>% pull(amplitude))
+    #   colors <- brush_colors()
+    #
+    #   selection_number <- length(brush_data)
+    #   selection_name <- paste("Selection", selection_number)
+    #
+    #   plotlyProxy("mean_spectrum", session) %>%
+    #     plotlyProxyInvoke("addTraces", list(
+    #       x = spec$frequency, y = spec$amplitude, type = 'scatter',
+    #       mode = 'none',
+    #       fill = 'tozeroy',
+    #       fillcolor = toRGB(colors[selection_number],
+    #                         alpha = input$alpha), name = selection_name,
+    #       hovertemplate = 'Amplitude: %{y:.2f}'
+    #     ))
+    #
+    #   # Update plotly object with new trace
+    #   p <- plotly_obj()
+    #   p <- p %>%
+    #     add_trace(x = spec$frequency, y = spec$amplitude, type = 'scatter', mode = 'none',
+    #               fill = 'tozeroy', fillcolor = toRGB(colors[selection_number], alpha = input$alpha),
+    #               name = selection_name,
+    #               hovertemplate = 'Amplitude: %{y:.2f}', line = list(color = 'rgba(0,0,0,0)'))
+    #   plotly_obj(p)
+    # })
 
     output$download_oscillogram <- downloadHandler(
       filename = function() {

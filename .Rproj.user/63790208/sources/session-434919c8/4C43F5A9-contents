@@ -45,9 +45,8 @@ spectrum_plotly <- function(wave,
                             freq.res = 50,
                             db.shade = TRUE,
                             ovlp = 0,
-                            fun = c("mean", "median", "var", "sd"),
-                            wn = c("hanning", "bartlett", "blackman",
-                                   "flattop", "hamming", "rectangle"),
+                            fun = "mean",
+                            wn = "blackman",
                             total.bandwidth = FALSE,
                             limit.indices = FALSE,
                             plot.title = "",
@@ -57,8 +56,8 @@ spectrum_plotly <- function(wave,
                             add.params = FALSE,
                             add.summary = TRUE,
                             x.breaks = 6,
-                            y.position = c("left", "right"),
-                            x.position = c("bottom", "top"),
+                            y.position = "left",
+                            x.position = "bottom",
                             show.x.title = TRUE,
                             show.y.title = TRUE,
                             color.db = "grey30",
@@ -74,10 +73,10 @@ spectrum_plotly <- function(wave,
 
   if (wl %% 2 == 1) { wl <- wl + 1 }
 
-  y.position <- match.arg(y.position)
-  x.position <- match.arg(x.position)
-  fun <- match.arg(fun)
-  wn <- match.arg(wn)
+  # y.position <- match.arg(y.position)
+  # x.position <- match.arg(x.position)
+  # fun <- match.arg(fun)
+  # wn <- match.arg(wn)
 
   if (is.null(fmax) || fmax == 0) {
     fmax <- wave@samp.rate / 2 / 1000  # Convert to kHz
@@ -179,14 +178,14 @@ spectrum_plotly <- function(wave,
                   fillcolor = color.linear,
                   line = list(color = color.linear),
                   opacity = 0.9,
-                  name = "Linear") %>%
+                  name = "Scaled Linear") %>%
       layout(
         title = plot.title,
         xaxis = list(title = if (show.x.title) "Frequency (kHz)" else NULL,
                      range = c(fmin, fmax),
                      tickvals = scales::breaks_pretty(n = x.breaks)(c(fmin, fmax)),
                      tickformat = ".1f"),
-        yaxis = list(title = "Amplitude",
+        yaxis = list(title = "Relative Amplitude",
                      range = c(0, 1),
                      tickvals = seq(0, 1, by = 0.2)),
         showlegend = FALSE
