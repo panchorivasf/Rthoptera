@@ -6,6 +6,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Launch the app
 #' high_pass_filter_app()
 #'
@@ -13,6 +14,7 @@
 #' # 1. Select a wave object from the R environment.
 #' # 2. Specify the high-pass filter frequency in kHz.
 #' # 3. Apply the filter and save the new wave object.
+#' }
 #' @import shiny
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs

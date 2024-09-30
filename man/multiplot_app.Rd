@@ -13,7 +13,9 @@ A Shiny app for visualizing, customizing, and downloading spectrogram and oscill
 This Shiny app allows users to visualize a combined plot of a spectrogram, mean spectrum, and oscillogram for a selected audio file (Wave object). Users can adjust settings such as noise floor, image dimensions, and background transparency, and can download the resulting plot as a PNG file.
 }
 \examples{
+\dontrun{
 if (interactive()) {
   multiplot_app()
+}
 }
 }

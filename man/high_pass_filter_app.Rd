@@ -13,6 +13,7 @@ A Shiny app interface for applying a high-pass filter and visualizing audio wave
 This function launches a Shiny app that allows users to apply a high-pass filter to audio wave objects and visualize either the mean spectrum or the spectrogram. Users can select an existing wave object from the R environment, apply a filter, and save the filtered wave object with a new name. The app also provides options to visualize the mean spectrum or the spectrogram of the selected wave object.
 }
 \examples{
+\dontrun{
 # Launch the app
 high_pass_filter_app()
 
@@ -20,4 +21,5 @@ high_pass_filter_app()
 # 1. Select a wave object from the R environment.
 # 2. Specify the high-pass filter frequency in kHz.
 # 3. Apply the filter and save the new wave object.
+}
 }

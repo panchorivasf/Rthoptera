@@ -17,8 +17,9 @@
 #' @source Original recording by Francisco Rivas Fuenzalida.
 #'
 #' @examples
+#' \dontrun{
 #' data(hoplosphyrum)
 #' summary(hoplosphyrum)
 #' spectrum_plotly(hoplosphyrum)
-#'
+#'}
 "hoplosphyrum"

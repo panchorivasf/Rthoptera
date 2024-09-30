@@ -14,8 +14,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' if (interactive()) {
 #'   multiplot_app()
+#' }
 #' }
 multiplot_app <- function() {
 

@@ -39,8 +39,10 @@
 #' @importFrom tibble tibble
 #'
 #' @examples
+#'  \dontrun{
 #' # Example usage:
 #' spectrum_plotly(Coryphoda_albidicollis, db.shade = FALSE, freq.res = 100, show.lines = TRUE)
+#' }
 spectrum_plotly <- function(wave,
                             freq.res = 50,
                             db.shade = TRUE,

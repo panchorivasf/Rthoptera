@@ -15,8 +15,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' if (interactive()) {
 #'   multi_meanspectra_app()
+#' }
 #' }
 multi_meanspectra_app <- function() {
 

@@ -17,8 +17,9 @@
 #' @source Original recording by Francisco Rivas Fuenzalida.
 #'
 #' @examples
+#' \dontrun{
 #' data(coryphoda22C)
 #' summary(coryphoda22C)
 #' spectrum_plotly(coryphoda22C)
-#'
+#'}
 "falcidectes"

@@ -16,10 +16,11 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   temp_stats_hiq_app()
 #' }
-
+#' }
 temporal_stats_hq_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"

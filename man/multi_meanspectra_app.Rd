@@ -13,7 +13,9 @@ A Shiny app for visualizing and downloading multi-selection mean spectra and osc
 This Shiny app allows users to visualize the mean spectra of multiple selections from an audio waveform. Users can interactively select regions of a waveform, generate their respective mean spectra, and overlay these spectra using a colorblind-safe palette. The app also provides functionality to download the oscillogram and mean spectra as image files.
 }
 \examples{
+\dontrun{
 if (interactive()) {
   multi_meanspectra_app()
+}
 }
 }

@@ -17,8 +17,9 @@
 #' @source Original recording by Cesare Brizio.
 #'
 #' @examples
+#' \dontrun{
 #' data(eumodicogryllus)
 #' summary(eumodicogryllus)
 #' spectrum_plotly(eumodicogryllus)
-#'
+#'}
 "eumodicogryllus"

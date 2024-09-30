@@ -20,11 +20,7 @@ A Shiny app interface for downsampling and visualizing audio wave objects.
 This function launches a Shiny app that allows users to downsample audio (wave objects) and visualize the mean spectrum. Users can select an existing wave object from the R environment, specify a new maximum frequency (kHz), downsample the audio, and save the downsampled wave object with a new name.
 }
 \examples{
-# Launch the app
+\dontrun{
 downsample_app()
-
-# Example usage after launching the app:
-# 1. Select a wave object from the R environment.
-# 2. Specify a new maximum frequency (kHz) for downsampling.
-# 3. Downsample and save the new wave object.
+}
 }

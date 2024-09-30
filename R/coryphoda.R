@@ -17,8 +17,10 @@
 #' @source Original recording by Francisco Rivas Fuenzalida.
 #'
 #' @examples
+#' \dontrun{
 #' data(coryphoda)
 #' summary(coryphoda)
 #' spectrum_plotly(coryphoda)
-#'
+#' }
+
 "coryphoda"

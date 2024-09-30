@@ -12,9 +12,10 @@
 #' @importFrom bslib bs_theme
 #'
 #' @examples
+#' \dontrun{
 #' # Launch the app
 #' import_wave_app()
-
+#' }
 import_wave_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"

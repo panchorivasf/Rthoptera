@@ -18,8 +18,9 @@
 #' @source Original recording by Cesare Brizio.
 #'
 #' @examples
+#'  \dontrun{
 #' data(tettigonia)
 #' summary(tettigonia)
 #' spectrum_plotly(tettigonia)
-#'
+#'}
 "tettigonia"

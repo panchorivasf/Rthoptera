@@ -13,6 +13,7 @@ One or more Wave objects created from selected parts of the original wave object
 This Shiny app allows users to select parts of a wave object, zoom in or out on the waveform, and save the selected region as a new wave object in the R environment.
 }
 \examples{
+ \dontrun{
 trim_app()
-
+}
 }

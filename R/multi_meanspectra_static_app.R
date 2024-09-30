@@ -14,8 +14,10 @@
 #' @noRd
 #'
 #' @examples
+#' \dontrun{
 #' if (interactive()) {
 #'   multi_meanspectra()
+#' }
 #' }
 
 multi_meanspectra_static_app <- function(){

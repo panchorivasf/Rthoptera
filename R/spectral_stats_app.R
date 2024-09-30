@@ -15,8 +15,10 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   spec_stats_app()
+#' }
 #' }
 spectral_stats_app <- function() {
 

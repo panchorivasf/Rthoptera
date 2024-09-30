@@ -35,7 +35,9 @@
 #' @noRd
 #'
 #' @examples
+#'  \dontrun{
 #' spectrum_plot(wave, win.size = 512, x.breaks = 5, fmin = 1, fmax = 10)
+#' }
 spectrum_plot <- function(wave,
                            win.size = NULL,
                            ovlp = 50,

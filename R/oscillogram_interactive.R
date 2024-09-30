@@ -12,7 +12,9 @@
 #' @importFrom magrittr %>%
 #' @importFrom plotly plot_ly
 #' @examples
+#' \dontrun{
 #' oscillogram_interactive(coryphoda_wave, title = "Coryphoda albidicollis")
+#' }
 oscillogram_interactive <- function(wave, title = "", line_color = 'black') {
 
 

@@ -15,8 +15,10 @@
 #' @importFrom seewave meanspec
 #'
 #' @examples
+#'  \dontrun{
 #' # Assuming `wave` is a loaded Wave object
 #' spec_df <- meanspec_df(wave, from = 0, to = 5, wl = 1024, fun = 'mean')
+#' }
 spectrum_df <- function(wave, freq.res = 10, fun = 'mean', wn = 'hanning') {
 
   # Determine the window length needed to obtain the desired frequency resolution

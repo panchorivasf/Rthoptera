@@ -8,15 +8,6 @@
 #'
 #' @return A Shiny app interface for downsampling and visualizing audio wave objects.
 #' @export
-#'
-#' @examples
-#' # Launch the app
-#' downsample_app()
-#'
-#' # Example usage after launching the app:
-#' # 1. Select a wave object from the R environment.
-#' # 2. Specify a new maximum frequency (kHz) for downsampling.
-#' # 3. Downsample and save the new wave object.
 #' @import shiny
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
@@ -24,6 +15,11 @@
 #' @importFrom seewave meanspec resamp
 #' @importFrom bslib bs_theme
 #' @importFrom shinycssloaders withSpinner
+#' @examples
+#' \dontrun{
+#' downsample_app()
+#' }
+
 downsample_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"

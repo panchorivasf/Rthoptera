@@ -13,6 +13,8 @@ This function launches a Shiny app for importing audio files. The processed wave
 This function launches a Shiny app that allows users to import and process audio files (WAV, MP3, or WAC format) into the R environment. The app supports stereo audio by allowing the user to select a channel (left or right) for processing, and it automatically removes any offset in the wave object. Users can assign a custom name to the processed wave object, which is then saved in the global environment.
 }
 \examples{
+\dontrun{
 # Launch the app
 import_wave_app()
+}
 }

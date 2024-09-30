@@ -4,10 +4,6 @@
 #'
 #' @return One or more Wave objects created from selected parts of the original wave object.
 #' @export
-#'
-#' @examples
-#' trim_app()
-#'
 #' @import shiny
 #' @import ggplot2
 #' @importFrom shinyjs useShinyjs extendShinyjs
@@ -15,6 +11,10 @@
 #' @importFrom tuneR extractWave
 #' @importFrom bslib bs_theme
 #' @importFrom shinycssloaders withSpinner
+#' @examples
+#'  \dontrun{
+#' trim_app()
+#'}
 trim_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"

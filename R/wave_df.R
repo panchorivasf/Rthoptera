@@ -11,6 +11,11 @@
 #' @importFrom seewave rmoffset
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate select row_number
+#' @examples
+#'  \dontrun{
+#' data(coryphoda)
+#' wave_df(coryphoda)
+#'}
 wave_df <- function(wave, norm = TRUE){
 
   if(norm){

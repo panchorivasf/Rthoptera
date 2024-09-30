@@ -93,6 +93,8 @@ A Plotly object representing the interactive spectrum plot.
 This function generates an interactive spectrum plot using Plotly, offering customizable options for windowing, overlap, amplitude shading (dB and linear), and the ability to display summary statistics and parameter annotations. The function supports both dB and linear scales, bandwidth calculations, and frequency markers.
 }
 \examples{
+ \dontrun{
 # Example usage:
 spectrum_plotly(Coryphoda_albidicollis, db.shade = FALSE, freq.res = 100, show.lines = TRUE)
+}
 }

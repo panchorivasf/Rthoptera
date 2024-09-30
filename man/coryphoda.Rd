@@ -28,9 +28,10 @@ The sound file has been imported into an R object using
 the \code{\link[tuneR]{readWave}} function from the \pkg{tuneR} package.
 }
 \examples{
+\dontrun{
 data(coryphoda)
 summary(coryphoda)
 spectrum_plotly(coryphoda)
-
+}
 }
 \keyword{datasets}

@@ -13,7 +13,9 @@ A Shiny app that generates and visualizes the spectrum plot of an audio wave obj
 This Shiny app allows users to visualize a spectrum plot for a selected audio wave object. It includes customizable options such as window length, overlap, window function, and amplitude scale (linear, dB, dBFS). Users can also adjust the axis positions, choose the number of frequency ticks, and add plot parameters or summary statistics to the plot.
 }
 \examples{
+ \dontrun{
 if (interactive()) {
   spectrum_plot_app()
+}
 }
 }

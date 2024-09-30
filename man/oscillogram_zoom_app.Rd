@@ -17,6 +17,9 @@ This Shiny app provides an interface to visualize an oscillogram along with zoom
 The user can select portions of the oscillogram to zoom in on, display either axes or a scale bar, and save the resulting image.
 }
 \examples{
+\dontrun{
+multioscillo_app()
+}
 if (interactive()) {
   oscillogram_zoom_app(dark.mode = TRUE)
 }

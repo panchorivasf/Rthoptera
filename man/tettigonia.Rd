@@ -28,9 +28,10 @@ The sound file has been imported into an R object using
 the \code{\link[tuneR]{readWave}} function from the \pkg{tuneR} package.
 }
 \examples{
+ \dontrun{
 data(tettigonia)
 summary(tettigonia)
 spectrum_plotly(tettigonia)
-
+}
 }
 \keyword{datasets}

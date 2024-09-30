@@ -16,8 +16,10 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   spectrum_plot_app()
+#' }
 #' }
 spectrum_plot_app <- function() {
 

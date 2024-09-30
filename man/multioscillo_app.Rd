@@ -16,6 +16,7 @@ A Shiny app interface for plotting and saving multi-oscillograms of selected wav
 This function launches a Shiny app that allows users to select multiple wave objects, plot their oscillograms, and save the resulting plots as a PNG file. Users can control the maximum duration of the waves to be plotted, set the scale bar, and specify image dimensions.
 }
 \examples{
+\dontrun{
 multioscillo_app()
-
+}
 }

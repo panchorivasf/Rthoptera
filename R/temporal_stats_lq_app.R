@@ -14,10 +14,11 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   temp_stats_lq_app()
 #' }
-
+#' }
 temporal_stats_lq_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"

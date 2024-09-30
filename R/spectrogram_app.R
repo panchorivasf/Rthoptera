@@ -14,8 +14,10 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' if (interactive()) {
 #'   spectrogram_app()
+#' }
 #' }
 spectrogram_app <- function() {
 

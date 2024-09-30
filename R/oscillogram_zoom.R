@@ -19,6 +19,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' multioscillo_app()
+#'}
 #' if (interactive()) {
 #'   oscillogram_zoom_app(dark.mode = TRUE)
 #' }

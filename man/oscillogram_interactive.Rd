@@ -21,5 +21,7 @@ This function generates an interactive oscillogram plot for a given wave object 
 The plot displays the waveform over time with customizable options for the title and line color.
 }
 \examples{
+\dontrun{
 oscillogram_interactive(coryphoda_wave, title = "Coryphoda albidicollis")
+}
 }

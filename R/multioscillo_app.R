@@ -7,9 +7,6 @@
 #' @return A Shiny app interface for plotting and saving multi-oscillograms of selected wave objects.
 #' @export
 #'
-#' @examples
-#' multioscillo_app()
-#'
 #' @import shiny
 #' @import ggplot2
 #' @importFrom magrittr %>%
@@ -19,6 +16,10 @@
 #' @importFrom patchwork wrap_plots
 #' @importFrom seewave duration
 #' @importFrom shinycssloaders withSpinner
+#' @examples
+#' \dontrun{
+#' multioscillo_app()
+#'}
 multioscillo_app <- function(dark.mode=TRUE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
