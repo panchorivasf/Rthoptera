@@ -1,0 +1,33 @@
+---
+title: "Preprocessing Audio"
+author: "Francisco Rivas"
+date: "2024-10-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## When and why to preprocess your recordings
+
+There are many reasons why bioacousticians edit their recordings before analyzing them. This is especially true when working with field recordings, where non-target sounds may obscure or 'soil' the analyses, often occupying frequencies below the signal of interest. In other cases, the field recordist used an ultrasonic microphone and a high sampling rate (e.g., 128 kHz, 384 kHz) and the recorded insect happened to sing well  below the Nyquist frequency (half the sampling rate). Sometimes the insect doesn't call very often, forcing us to monitor for long periods of silence without stopping the recording. In all these cases, we will need to preprocess our recordings. ***Rthoptera*** offers functions to deal with most of these issues, minimizing the need for multiple software in your workflow. 
+
+DISCLAIMER: R is not optimized for rendering large ammounts of data in plots. If you have long sound files (> 1 min) recording at high sampling rates (> 48 kHz), you might want to subset them with a dedicated audio software before importing them into R. A popular free audio editor is Audacity. 
+
+Run this code in the R console or in a new R script to open the `import_wave_app`, which will allow you to select, name and imoport sound files as R objects of class "Wave". 
+
+```{r}
+library(Rthoptera)
+import_wave_app()
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
