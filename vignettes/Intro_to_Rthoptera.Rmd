@@ -20,7 +20,7 @@ library(Rthoptera)
 
 ---
 title: "Introduction to Rthoptera"
-author: "Your Name"
+author: "Francisco Rivas"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to Rthoptera}
@@ -51,6 +51,8 @@ Once pre-processing is complete, Rthoptera offers a range of analysis tools to e
 - **Spectral Statistics**: Automatically calculate spectral metrics based on the mean power spectrum of a Wave object. These statistics provide insights into the frequency domain of the audio signal.
 
 - **Temporal Statistics**: Automatically extract temporal metrics from your audio recordings. This includes identifying and analyzing peaks (pulses), trains (syllables), and echemes (groups of syllables or trills) in the insect sounds.
+
+## Plotting
 
 - **Multi-Power Spectra**: An interactive tool that overlays multiple power spectra on a color-coded oscillogram, allowing for easy comparison and visualization of spectral features across different time intervals.
 
@@ -94,7 +96,7 @@ Now, you're ready to start exploring the interactive tools and analyses availabl
 
 ## Example
 
-Once you have the package installed, you can launch any of the Shiny applications to interactively process and analyze your insect sound recordings. For example, you can run the import tool like this:
+Once you have the package installed, you can launch any of the Shiny applications (i.e., functions ending with '_app', without arguments) to interactively process and analyze your insect sound recordings. For example, you can run the import tool like this:
 
 ```r
 import_wave_app()

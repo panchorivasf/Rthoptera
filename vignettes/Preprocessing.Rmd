@@ -3,6 +3,7 @@ title: "Preprocessing Audio"
 author: "Francisco Rivas"
 date: "2024-10-02"
 output: html_document
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -15,9 +16,9 @@ There are many reasons why bioacousticians edit their recordings before analyzin
 
 DISCLAIMER: R is not optimized for rendering large ammounts of data in plots. If you have long sound files (> 1 min) recording at high sampling rates (> 48 kHz), you might want to subset them with a dedicated audio software before importing them into R. A popular free audio editor is Audacity. 
 
-Run this code in the R console or in a new R script to open the `import_wave_app`, which will allow you to select, name and imoport sound files as R objects of class "Wave". 
+Run this code in the R console or in a new R script to open the `import_wave_app`, which will allow you to select, name and import sound files as R objects of class "Wave". 
 
-```{r}
+```{r, echo=TRUE, eval = FALSE}
 library(Rthoptera)
 import_wave_app()
 ```
@@ -25,7 +26,6 @@ import_wave_app()
 ## Including Plots
 
 You can also embed plots, for example:
-
 ```{r pressure, echo=FALSE}
 plot(pressure)
 ```
