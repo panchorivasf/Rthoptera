@@ -92,11 +92,3 @@ To install the Rthoptera package, follow these steps:
     library(Rthoptera)
     ```
 
-Now, you're ready to start exploring the interactive tools and analyses available in **Rthoptera**.
-
-## Example
-
-Once you have the package installed, you can launch any of the Shiny applications (i.e., functions ending with '_app', without arguments) to interactively process and analyze your insect sound recordings. For example, you can run the import tool like this:
-
-```r
-import_wave_app()
