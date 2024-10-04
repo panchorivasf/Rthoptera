@@ -32,6 +32,7 @@ spectral_stats_app <- function() {
            margin-bottom: 2px; margin-right: 15px;"),
 
       fluidPage(
+        title = "Spectral Statistics",
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
 
@@ -99,17 +100,17 @@ spectral_stats_app <- function() {
                 checkboxInput("total", "Total Bandwidth", value = FALSE)),
                 checkboxInput("robust", "Robust", value = FALSE)
               ),
-              column(2, selectInput("ampMax", "Amplitude Scale", choices = list("dB (max0)" = 0, "Linear" = 1), selected = 1)),
-              column(2, numericInput("dbth", "Amp.Threshold", value = -20, min = -3, max = -100, step = 1)),
+              column(1, selectInput("ampMax", "Scale", choices = list("dB (max0)" = 0, "Linear" = 1), selected = 1)),
+              column(1, numericInput("dbth", "Threshold", value = -20, min = -3, max = -100, step = 1)),
               # column(1,checkboxInput("lines", "Show Lines", value = TRUE)),
               column(2, textInput("dataName", "Name for data frame", value = "")),
-              column(1,downloadButton("savePlot", "Save HTML Plot")),
+              column(3,downloadButton("savePlot", "Save HTML Plot")),
               column(2, verticalLayout(
-                actionButton("saveDataEnv", "Save Table to R"),
+                actionButton("saveDataEnv", "Table to R"),
                 downloadButton("downloadData", "Export CSV")
               )
               ),
-              column(1, actionButton("close", "Close App")),
+              column(2, actionButton("close", "Close App")),
               fluidRow(
                 div(style = "margin-top: 10px; margin-left: 10px; margin-right: 10px;",
                     withSpinner(uiOutput("plotOutput"))),
