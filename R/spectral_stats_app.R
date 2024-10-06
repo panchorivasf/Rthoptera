@@ -39,7 +39,6 @@ spectral_stats_app <- function() {
         theme = bslib::bs_theme(bootswatch = "darkly"),
 
         tags$head(tags$style(
-
           HTML(
             "
               body {
@@ -63,7 +62,7 @@ spectral_stats_app <- function() {
               }
 
                  #submit {
-               border: 2px solid forestgreen; /* Blue contour */
+               border: 2px solid forestgreen; /* Green contour */
                border-radius: 5px; /* Optional: Rounded corners */
               }
 
@@ -80,7 +79,6 @@ spectral_stats_app <- function() {
 
                 "
           )
-
         )),
 
         sidebarLayout(
@@ -100,29 +98,33 @@ spectral_stats_app <- function() {
                 checkboxInput("total", "Total Bandwidth", value = FALSE)),
                 checkboxInput("robust", "Robust", value = FALSE)
               ),
-              column(1, selectInput("ampMax", "Scale", choices = list("dB (max0)" = 0, "Linear" = 1), selected = 1)),
-              column(1, numericInput("dbth", "Threshold", value = -20, min = -3, max = -100, step = 1)),
-              # column(1,checkboxInput("lines", "Show Lines", value = TRUE)),
+              column(1, selectInput("ampMax", "Scale",
+                                    choices = list("dB (max0)" = 0, "Linear" = 1),
+                                    selected = 1)),
+              column(1, numericInput("dbth", "Threshold",
+                                     value = -20,
+                                     min = -3,
+                                     max = -100,
+                                     step = 1)),
               column(2, textInput("dataName", "Name for data frame", value = "")),
-              column(3,downloadButton("savePlot", "Save HTML Plot")),
+              column(2, downloadButton("savePlot", "Save HTML Plot")),
               column(2, verticalLayout(
                 actionButton("saveDataEnv", "Table to R"),
                 downloadButton("downloadData", "Export CSV")
-              )
-              ),
-              column(2, actionButton("close", "Close App")),
-              fluidRow(
-                div(style = "margin-top: 10px; margin-left: 10px; margin-right: 10px;",
-                    withSpinner(uiOutput("plotOutput"))),
-                withSpinner(DTOutput("dataOutput"))
-              )
+              )),
+              column(1, actionButton("close", "Close App", style = 'white-space: nowrap;'))
+            ),
+            fluidRow(
+              div(style = "margin-top: 10px; margin-left: 10px; margin-right: 10px;",
+                  withSpinner(uiOutput("plotOutput"))),
+              withSpinner(DTOutput("dataOutput"))
             )
-
           )
         )
       )
     )
   }
+
   server = function(input, output, session) {
     # Function definition
     specStats <- function(wave, sp.name = "Species name",
