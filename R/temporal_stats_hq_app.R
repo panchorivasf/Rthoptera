@@ -378,14 +378,16 @@ temporal_stats_hq_app <- function() {
         norm.env = norm.env
       )
 
-      msmooth_vec <- c(msmooth_window, msmooth_overlap)
 
       if (wave@samp.rate < 192000) {
         wave <- resamp(wave, g = 192000, output = "Wave")
       }
 
+      msmooth_vec <- c(msmooth_window, msmooth_overlap)
+
       # Get envelope of the wave
       envelope_vector <- seewave::env(wave, msmooth = msmooth_vec, plot = FALSE)
+      # envelope_vector <- warbleR::envelope(as.numeric(wave@left), ssmooth = msmooth_window)
 
       if (norm.env) {
         envelope_vector <- (envelope_vector - min(envelope_vector)) / (max(envelope_vector) - min(envelope_vector))
@@ -809,4 +811,3 @@ temporal_stats_hq_app <- function() {
   shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
 
 }
-

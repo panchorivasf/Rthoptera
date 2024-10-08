@@ -31,13 +31,50 @@ downsample_app <- function() {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = bslib::bs_theme(bootswatch = "darkly"),
+        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
-              body {
-                margin: 20px; /* Adds margin around the entire page */
+             body {
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
+             }
+
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
               }
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+                  .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
+
+
               #audioPlot {
                 height: calc(100vh - 120px); /* Adjusts height taking into account other elements */
                 width: 100%;
@@ -87,8 +124,8 @@ downsample_app <- function() {
 
         fluidRow(
           column(3,
-                 div(class = 'inline', selectInput("selectedWave", "Select a wave object:", choices = NULL, width = '90%')),
-                 div(style = "margin-top: 5px;", actionButton("refresh", "Refresh", width='70%'))
+                 div(class = 'inline', selectInput("selectedWave", "Select a wave object:", choices = NULL, width = '90%'))
+                 # div(style = "margin-top: 5px;", actionButton("refresh", "Refresh", width='70%'))
           ),
           column(1,
                  div(style = "margin-top: 20px;", actionButton("plotMeanSpectrum", "Plot"))
@@ -101,6 +138,10 @@ downsample_app <- function() {
           column(2,
                  div(class = 'inline', textInput("newName", "Name for new wave:", value = "")),
                  div(style = "margin-top: 5px;", actionButton("saveEditedWave", "Save"))
+          ),
+
+          column(1,
+                 div(style = "margin-top: 5px;", actionButton("help", "Help"))
           ),
 
           column(1,actionButton("close", "Close App"))
@@ -212,9 +253,9 @@ downsample_app <- function() {
       update_wave_choices()
     })
 
-    observeEvent(input$refresh, {
-      update_wave_choices()
-    })
+    # observeEvent(input$refresh, {
+    #   update_wave_choices()
+    # })
 
     # Update the reactive waveObject whenever the selection changes
     observeEvent(input$selectedWave, {
@@ -283,6 +324,33 @@ downsample_app <- function() {
         ))
       })
     })
+
+    # Define the help modal dialog
+    observeEvent(input$help, {
+      showModal(modalDialog(
+        title = "Help",
+        HTML("
+          Researchers often use ultrasonic equipment during a recording session
+          targeting a broad range of taxa. The resulting collection often includes
+          recordings of crickets singing around 5 kHz sampled at 192 kHz or higher.
+          In this scenario, downsampling might help improve the speed of plot
+          rendering and measurements.<br><br>
+          The rule of thumb recordists use to avoid artifacts such as aliasing
+          is to select a sampling rate that is higher than double the maximum signal
+          of interest. For example, suppose the maximum frequency in the song
+          of a cricket is 5 kHz. The minimum sampling rate required to capture
+          the signal would be somewhere higher than 10 kHz. However, to maintain
+          consistency in the resolution of spectral and temporal analyses across
+          recordings, we fixed the lower sampling rate limit to 48 kHz.<br><br>
+          TIP: Use the cursor to hover over the Mean Power Spectrum and identify
+          the maximum frequency of interest in the recording.
+        "),
+        easyClose = TRUE,
+        footer = modalButton("Close")
+      ))
+    })
+
+
 
 
     # Stop app when the tab is closed with the "X" button

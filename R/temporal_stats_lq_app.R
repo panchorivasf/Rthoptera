@@ -1,16 +1,19 @@
 #' Temporal Statistics Low-Quality Shiny App
 #'
-#' This Shiny app performs low-quality temporal statistics analysis on wave objects. It allows the user to configure parameters such as smoothing window, peak finder thresholds, and gap limits for trains and peaks. The app generates interactive plots and data tables summarizing echemes, trains, and peaks, along with parameter settings.
+#' This Shiny app performs low-quality temporal statistics analysis on wave objects. It allows the user to configure parameters such as smoothing window, peak finder thresholds, and gap limits for trains and peaks. The app generates interactive plots and data tables summarizing motifs, trains, and peaks, along with parameter settings.
 #'
 #' @return A Shiny app for analyzing temporal statistics of acoustic waveforms.
 #' @import shiny
 #' @importFrom magrittr %>%
+#' @importFrom shinyjs useShinyjs extendShinyjs
+#' @importFrom shinyBS bsButton bsPopover
 #' @importFrom plotly plot_ly add_lines layout renderPlotly add_markers
 #' @importFrom DT datatable renderDT
-#' @importFrom seewave env duration
+#' @importFrom seewave duration
+#' @importFrom warbleR envelope
 #' @importFrom writexl write_xlsx
 #' @importFrom dplyr group_by summarize ungroup mutate lead tibble relocate
-#' @importFrom bslib bs_theme
+#'
 #' @export
 #'
 #' @examples
@@ -26,86 +29,301 @@ temporal_stats_lq_app <- function() {
 
   ui <- function(request) {
     tagList(
-      h1("Temporal Statistics", style = "font-size: 28px; margin-left: 15px;"),
+      h1("Temporal Statistics LQ", style = "font-size: 28px; margin-left: 15px;"),
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
+              /* General body styling */
               body {
-                margin: 5px; /* Adds margin around the entire page */
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
               }
-              .btn-group-vertical > .btn {
-                margin-bottom: 10px; /* Adds space between vertical buttons */
+
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
               }
-              .row {
-                margin-bottom: 10px; /* Adds vertical space between rows */
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
               }
-              .shiny-input-container {
-                margin-right: 2px; /* Reduces horizontal space between inputs */
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
               }
+
+              #run {
+               border: 2px solid forestgreen; /* Blue contour */
+               padding: 5px 5px; /* Button (inside) padding */
+               border-radius: 5px; /* Optional: Rounded corners */
+                       }
+
+              #saveData {
+                border: 2px solid dodgerblue; /* Blue contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Optional: Rounded corners */
+              }
+
+              #savePlot {
+                border: 2px solid dodgerblue; /* Blue contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Optional: Rounded corners */
+              }
+
+
+              #close {
+                border: 2px solid red; /* Red contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Optional: Rounded corners */
+              }
+
+
+              .btn:hover, .btn-info:hover {
+                background-color: #5a6268;
+                border-color: #5a6268;
+              }
+
+              /* Styling for popovers */
+              .popover {
+                background-color: #ffffff;
+                border: 1px solid #252626;
+                color: #252626;
+              }
+
+
+               /* DataTables Styling */
               .dataTables_wrapper .caption-top {
                 caption-side: top !important;
                 font-weight: bold;
-                color: white;
+                color: #ffffff;
+              }
+
+              .dataTables_wrapper .dataTables_length,
+              .dataTables_wrapper .dataTables_filter,
+              .dataTables_wrapper .dataTables_info,
+              .dataTables_wrapper .dataTables_paginate,
+              .dataTables_wrapper .dataTables_processing {
+                color: #ffffff;
+              }
+
+              .dataTable thead th,
+              .dataTable tfoot th {
+                color: #ffffff;
+                border-color: #ffffff;
+              }
+
+              .dataTable tbody td {
+                color: #ffffff;
+                border-color: #ffffff;
+              }
+
+              /* Ensure horizontal lines in tables are white */
+              .dataTable tbody tr {
+                border-top: 1px solid #ffffff;
+                border-bottom: 1px solid #ffffff;
+              }
+
+              /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+              .input-with-info label {
+                margin-right: 5px;
               }
             "
           )
         )),
-        tags$script(
-          HTML(
-            "
-              Shiny.addCustomMessageHandler('toggleSpinner', function(message) {
-                if (message) {
-                  document.getElementById('spinner').style.display = 'block';
-                } else {
-                  document.getElementById('spinner').style.display = 'none';
-                }
-              });
-            "
-          )
+        column(2,
+               fluidRow(
+                 column(12,
+                        selectInput("selectedWave", "Select a Wave Object:", choices = NULL)
+                 )
+               ),
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Specimen ID"),
+                              bsButton("specimen_info", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        textInput("specimen_id", label = NULL, value = "")
+                 )
+               ),
+               bsPopover(
+                 id = "specimen_info",
+                 title = "Specimen ID",
+                 content = HTML(paste0("A unique identifier for the specimen. For example, &#39GRYCAM_001&#39, is the &#39Alpha code&#39 for Gryllus campestris, specimen 001.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Smoothing"),
+                              bsButton("ssmooth_window_info", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        numericInput("ssmooth", label = NULL, value = 100,
+                                     min = 10, max = 1000, step = 10)
+                 )
+               ),
+               bsPopover(
+                 id = "ssmooth_window_info",
+                 title = "Smoothing",
+                 content = HTML(paste0("Window size (samples) used to smooth the envelope. A larger window will result in a smoother envelope.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Peakfinder Window"),
+                              bsButton("peakfinder_info", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        numericInput("peakfinder_ws",
+                                     label = NULL,
+                                     value = 40,
+                                     min = 10,
+                                     max = 200,
+                                     step = 5)
+                 )
+               ),
+               bsPopover(
+                 id = "peakfinder_info",
+                 title = "Peakfinder Window",
+                 content = HTML(paste0("Window size (samples) used to find peaks along the envelope.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Peakfinder Threshold"),
+                              bsButton("peakfinder_thr_info", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        numericInput("peakfinder_threshold",
+                                     label = NULL,
+                                     value = 0.005,
+                                     min = 0.001,
+                                     max = 0.5,
+                                     step = 0.001)
+                 )
+               ),
+               bsPopover(
+                 id = "peakfinder_thr_info",
+                 title = "Peakfinder Threshold",
+                 content = HTML(paste0("The minimum distance between a valley and a peak. This distance is measured as a proportion relative to the maximum amplitude [0:1].")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Max Peak Gap"),
+                              bsButton("max_peak", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        numericInput("max_peak_gap", label = NULL, value = 0.01,
+                                     min = 0.001, max = 0.1, step = 0.001)
+
+                 )
+               ),
+               bsPopover(
+                 id = "max_peak",
+                 title = "Max Peak Gap",
+                 content = HTML(paste0("The maximum gap (in seconds) allowed between peaks to be considered as belonging to the same train.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Max Train Gap"),
+                              bsButton("max_train", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        numericInput("max_train_gap", label = NULL, value = 0.08,
+                                     min = 0.01, max = 1, step = 0.01)
+                 )
+               ),
+               bsPopover(
+                 id = "max_train",
+                 title = "Max Train Gap",
+                 content = HTML(paste0("The maximum gap (in seconds) allowed between trains to be grouped in the same motif.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               )
+
         ),
-        fluidRow(
-          column(
-            width = 2,
-            div(
-              sidebarPanel(
-                selectInput("selectedWave", "Select a Wave Object:", choices = NULL),
-                textInput("specimen_id", "Specimen ID", value = ""),
-                numericInput("ssmooth", "Smoothing Window", value = 100,
-                             min = 10, max = 1000, step = 10),
-                numericInput("peakfinder_ws", "Peakfinder Window", value = 40,
-                             min = 10, max = 200, step = 5),
-                numericInput("peakfinder_threshold", "Peakfinder Threshold",
-                             value = 0.005, min = 0.001, max = 0.5, step = 0.001),
-                numericInput("max_train_gap", "Max Train Gap", value = 0.08,
-                             min = 0.01, max = 1, step = 0.01),
-                numericInput("max_peak_gap", "Max Peak Gap", value = 0.01,
-                             min = 0.001, max = 0.1, step = 0.001),
-                actionButton("run", "Run Analysis"),
-                downloadButton("saveData", "Save Data"),
-                actionButton("help", "Help"),
-                column(1, actionButton("close", "Close App")),
-                width = 12,
-                style = "height: 100%; overflow-y: auto; padding: 10px;"
-              ),
-              style = "width: 100%;"
-            )
-          ),
-          column(
-            width = 10,
-            mainPanel(
-              withSpinner(plotlyOutput("audioPlot")),
-              DTOutput("echeme_data"),
-              DTOutput("train_data"),
-              DTOutput("peak_data"),
-              DTOutput("params"),
-              width = 12,
-              style = "padding: 10px;"
-            )
-          )
+
+        column(10,
+               fluidRow(
+                 column(2, actionButton("run", "Run Analysis")),
+                 column(2, downloadButton("saveData", "Export Excel Workbook")),
+                 column(2, downloadButton("savePlot", "Export HTML Plot")),
+                 # column(2, actionButton("help", "Help")),
+                 column(1, actionButton("close", "Close App")),
+                 style = "margin-bottom: 20px;"
+
+               ),
+               fluidRow(
+                 column(12,
+                        withSpinner(plotlyOutput("audioPlot")),
+                        DTOutput("motif_data"),
+                        DTOutput("train_data"),
+                        DTOutput("peak_data"),
+                        DTOutput("params")
+                 )
+               )
         )
       )
     )
@@ -137,10 +355,10 @@ temporal_stats_lq_app <- function() {
 
       waveDuration <- seewave::duration(wave)
 
-      envelope_vector <- seewave::env(wave, ssmooth = ssmooth, plot = FALSE)
+      # envelope_vector <- seewave::env(wave, ssmooth = ssmooth, plot = FALSE)
 
-      # warbleR's envelope is faster but the package is not available in CRAN at the moment
-      # envelope_vector <- warbleR::envelope(as.numeric(wave@left), ssmooth = ssmooth)
+      # warbleR's envelope is faster
+      envelope_vector <- warbleR::envelope(as.numeric(wave@left), ssmooth = ssmooth)
 
       if (norm.env) {
         envelope_vector <- (envelope_vector - min(envelope_vector)) / (max(envelope_vector) - min(envelope_vector))
@@ -172,7 +390,7 @@ temporal_stats_lq_app <- function() {
 
       peak_data <- tibble(
         specimen.id = rep(specimen.id, length(peaks)),
-        echeme.id = integer(length(peaks)),
+        motif.id = integer(length(peaks)),
         train.id = integer(length(peaks)),
         peak.id = integer(length(peaks)),
         peak.time = peak_times_ms,
@@ -180,14 +398,14 @@ temporal_stats_lq_app <- function() {
       )
 
       trains <- list()
-      echemes <- list()
-      echeme_id <- 1
+      motifs <- list()
+      motif_id <- 1
       train_id <- 1
       train_start <- peaks[1]
-      current_echeme <- list(c(train_start, NULL))
+      current_motif <- list(c(train_start, NULL))
 
       peak_data <- peak_data %>%
-        mutate(echeme.id = ifelse(row_number() == 1, echeme_id, echeme.id),
+        mutate(motif.id = ifelse(row_number() == 1, motif_id, motif.id),
                train.id = ifelse(row_number() == 1, train_id, train.id),
                peak.id = ifelse(row_number() == 1, 1, peak.id))
 
@@ -201,13 +419,13 @@ temporal_stats_lq_app <- function() {
           train_end <- peaks[i - 1]
           trains <- append(trains, list(c(train_start, train_end)))
           train_start <- peaks[i]
-          current_echeme[[length(current_echeme)]][2] <- train_end
-          current_echeme <- append(current_echeme, list(c(train_start, NULL)))
+          current_motif[[length(current_motif)]][2] <- train_end
+          current_motif <- append(current_motif, list(c(train_start, NULL)))
           peak_counter <- 0
           if (peak_times_ms[i] - peak_times_ms[i - 1] > max_train_gap * 1000) {
-            echemes <- append(echemes, list(current_echeme))
-            current_echeme <- list(c(train_start, NULL))
-            echeme_id <- echeme_id + 1
+            motifs <- append(motifs, list(current_motif))
+            current_motif <- list(c(train_start, NULL))
+            motif_id <- motif_id + 1
             train_id <- 1
           } else {
             train_id <- train_id + 1
@@ -215,7 +433,7 @@ temporal_stats_lq_app <- function() {
         }
         peak_counter <- peak_counter + 1
         peak_data <- peak_data %>%
-          mutate(echeme.id = ifelse(peak.time == peak_times_ms[i], echeme_id, echeme.id),
+          mutate(motif.id = ifelse(peak.time == peak_times_ms[i], motif_id, motif.id),
                  train.id = ifelse(peak.time == peak_times_ms[i], train_id, train.id),
                  peak.id = ifelse(peak.time == peak_times_ms[i], peak_counter, peak.id))
       }
@@ -226,12 +444,12 @@ temporal_stats_lq_app <- function() {
 
       train_end <- peaks[length(peaks)]
       trains <- append(trains, list(c(train_start, train_end)))
-      current_echeme[[length(current_echeme)]][2] = train_end
-      echemes <- append(echemes, list(current_echeme))
+      current_motif[[length(current_motif)]][2] = train_end
+      motifs <- append(motifs, list(current_motif))
 
       # Create tibble for peak train measurements
       train_data <- peak_data %>%
-        group_by(specimen.id, echeme.id, train.id) %>%
+        group_by(specimen.id, motif.id, train.id) %>%
         summarize(
           train.start = round(min(peak.time),4),
           train.end = round(max(peak.time),4),
@@ -240,25 +458,59 @@ temporal_stats_lq_app <- function() {
           peak.rate = round((n() / ((max(peak.time) - min(peak.time))/1000)),1)
         ) %>%
         ungroup() %>%
-        # Set last train.period of each echeme to NA and round to 3 decimals
-        mutate(train.period = ifelse(is.na(lead(echeme.id)) | lead(echeme.id) != echeme.id, NA, lead(train.start) - train.start)) %>%
+        # Set last train.period of each motif to NA and round to 3 decimals
+        mutate(train.period = ifelse(is.na(lead(motif.id)) | lead(motif.id) != motif.id, NA, lead(train.start) - train.start),
+               train.gap = round(lead(train.start) - train.end, 3)        # Gap: next train.start - current train.end
+        ) %>%
         relocate(train.period, .after = train.duration) %>%
+        relocate(train.gap, .after = train.period) %>%
         mutate(train.period = round(train.period,3))
 
 
-      # Create tibble for echeme measurements
-      echeme_data <- train_data %>%
-        group_by(specimen.id, echeme.id) %>%
+
+      # Create tibble for motif measurements
+      motif_data <- train_data %>%
+        group_by(specimen.id, motif.id) %>%
         summarize(
-          echeme.start = round(min(train.start),4),
-          echeme.end = round(max(train.end),4),
-          echeme.duration = round(echeme.end - echeme.start,3),
-          echeme.period = round((lead(echeme.start) - echeme.start),3),
+          motif.start = round(min(train.start),3),
+          motif.end = round(max(train.end),3),
+          motif.duration = round(motif.end - motif.start,3),
+          motif.period = round((lead(motif.start) - motif.start),3),
           n.trains = n(),
           train.rate = round(n() / ((max(train.end)/1000) - (min(train.start)/1000)),1),
-          duty.cycle = round((sum(train.duration) / echeme.duration)*100,2)
+          duty.cycle = round((sum(train.duration) / motif.duration)*100,2)
         ) %>%
         ungroup()
+
+      motif_data <- motif_data %>%
+        mutate(
+          proportions = map(motif.id, function(eid) {
+            train_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.duration)
+            gap_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.gap)
+            motif_duration <- motif_data$motif.duration[eid]
+            proportions <- numeric(0)
+
+            for (i in seq_along(train_durations)) {
+              proportions <- c(proportions, train_durations[i] / motif_duration)
+              if (i < length(train_durations) && !is.na(gap_durations[i]) && gap_durations[i] <= max_train_gap) {
+                proportions <- c(proportions, gap_durations[i] / motif_duration)
+              }
+            }
+
+            round(proportions, 2)
+          })
+        ) %>%
+        rowwise() %>%
+        mutate(specimen.id = base::unique(train_data$specimen.id),
+               props.sd = round(sd(unlist(proportions)), 3),
+               props.ent = round(-sum(unlist(proportions)[unlist(proportions) > 0] * log(unlist(proportions)[unlist(proportions) > 0])), 3),
+               props.mean = round(mean(unlist(proportions)), 3),
+               props.cv = round((props.sd / props.mean), 3),
+               props.diff.sd = round(sd(diff(unlist(proportions))), 3),
+               pci = round((props.ent * props.cv + sqrt(n.trains)) /  (sqrt(motif.duration) + 1), 3)
+        ) %>%
+        ungroup() %>%
+        select(specimen.id, everything(), -proportions, proportions)
 
       # Prepare annotations for the plot
       annotations <- list(
@@ -268,28 +520,62 @@ temporal_stats_lq_app <- function() {
           xref = 'paper',
           yref = 'paper',
           text = paste("<b> Summary Statistics</b>",
-                       "<br> N. echemes:", length(echemes),
-                       "<br> Echeme duration: ", round(mean(echeme_data$echeme.duration/1000),3), "s",
-                       "<br> Duty Cycle: ", round(mean(echeme_data$duty.cycle),1), "%",
-                       "<br> Trains / Echeme:", mean(echeme_data$n.trains),
-                       "<br> Train Rate: " , round(mean(echeme_data$train.rate)), "tps",
+                       "<br> N. motifs:", length(motifs),
+                       "<br> motif duration: ", round(mean(motif_data$motif.duration/1000),3), "s",
+                       "<br> Duty Cycle: ", round(mean(motif_data$duty.cycle),1), "%",
+                       "<br> Trains / motif:", mean(motif_data$n.trains),
+                       "<br> Train Rate: " , round(mean(motif_data$train.rate)), "tps",
                        "<br> Train Duration: ", round(mean(train_data$train.duration, na.rm = TRUE)), "ms",
                        "<br> Peaks / Train: ", round(mean(train_data$n.peaks, na.rm = TRUE)),
-                       "<br> Peak Rate: ", round(mean(train_data$peak.rate, na.rm = TRUE)), "pps"),
-
-
+                       "<br> Peak Rate: ", round(mean(train_data$peak.rate, na.rm = TRUE)), "pps",
+                       "<br> Mean PCI: ", mean(motif_data$pci)),
 
           showarrow = FALSE,
           font = list(size = 12),
           align = "left",
           bgcolor = 'rgba(255, 255, 255, 0.5)',
           bordercolor = 'rgba(0, 0, 0, 0.5)',
-          borderwidth = 1
+          borderwidth = 1,
+          opacity = 1,
+          visible = TRUE
         )
       )
 
+
+      # annotations <- list(
+      #   list(
+      #     x = 0.01,
+      #     y = 0.01,
+      #     xref = 'paper',
+      #     yref = 'paper',
+      #     text = paste("<b> Summary Statistics</b>",
+      #                  "<br> N. motifs: ", summary_data$n.motifs,
+      #                  "<br> Mean elements/motif: ", summary_data$mean.elements.motif,
+      #                  "<br> Mean motif duration: ", summary_data$mean.motif.dur, "s",
+      #                  "<br> Mean element duration: ", summary_data$mean.element.dur, "s",
+      #                  "<br> Mean element gap: ", summary_data$mean.gap.dur, "s",
+      #                  "<br> Mean element rate: ", summary_data$mean.element.rate, "pps",
+      #                  "<br> Mean duty cycle: ", summary_data$mean.duty.cycle,"%",
+      #                  "<br> Mean entropy: ", summary_data$mean.ent,
+      #                  "<br> Mean PCI: ", summary_data$mean.pci
+      #     ),
+      #     showarrow = FALSE,
+      #     font = list(size = 12),
+      #     align = "left",
+      #     bgcolor = 'rgba(255, 255, 255, 0.8)',
+      #     bordercolor = 'rgba(0, 0, 0, 0.5)',
+      #     borderwidth = 1,
+      #     opacity = 1,
+      #     visible = TRUE
+      #   )
+      # )
+
+
       # Start the interactive plot
       p <- plot_ly() %>%
+        add_lines(x = ~time_vector, y = ~envelope_vector, name = "Summary Statistics",
+                  hoverinfo = "none",  line = list(color = 'rgba(20, 20, 20, 0)',
+                                                   width = 2), legendgroup = "Summary Stats") %>%
         add_lines(x = ~time_vector, y = ~envelope_vector, name = "Envelope",
                   hoverinfo = "none",  line = list(color = 'rgb(20, 20, 20)',
                                                    width = 2))
@@ -306,16 +592,16 @@ temporal_stats_lq_app <- function() {
                     hoverinfo = "x", text = paste("Time:", round(c(train_start_time, train_end_time), 2)))
       }
 
-      # Add echeme lines to the plot using echeme_data
-      for (i in seq_len(nrow(echeme_data))) {
-        echeme_start <- echeme_data$echeme.start[i]/1000
-        echeme_end <- echeme_data$echeme.end[i]/1000
+      # Add motif lines to the plot using motif_data
+      for (i in seq_len(nrow(motif_data))) {
+        motif_start <- motif_data$motif.start[i]/1000
+        motif_end <- motif_data$motif.end[i]/1000
         show_legend <- if (i == 1) TRUE else FALSE
         p <- p %>%
-          add_lines(x = c(echeme_start, echeme_end), y = c(1, 1),
-                    name = "Echemes", line = list(color = "#0072B2", width = 6),
-                    showlegend = show_legend, legendgroup = "Echemes",
-                    hoverinfo = "x", text = paste("Time:", round(c(echeme_start, echeme_end), 2)))
+          add_lines(x = c(motif_start, motif_end), y = c(1, 1),
+                    name = "motifs", line = list(color = "#0072B2", width = 6),
+                    showlegend = show_legend, legendgroup = "motifs",
+                    hoverinfo = "x", text = paste("Time:", round(c(motif_start, motif_end), 2)))
       }
 
       # Add peak markers
@@ -327,6 +613,7 @@ temporal_stats_lq_app <- function() {
       p <- p %>%
         layout(
           annotations = annotations,
+          # title = summary_data$specimen.id,
           xaxis = list(
             title = list(text = "Time (s)", standoff = 10),
             ticklen = 5,
@@ -341,8 +628,10 @@ temporal_stats_lq_app <- function() {
           legend = list(
             orientation = "h",
             x = 0.5,
-            y = 1.1,
-            xanchor = "center"
+            y = 1.05,
+            xanchor = "center",
+            bgcolor = "rgba(0, 0, 0, 0)"
+
           ),
           margin = list(
             l = 70,
@@ -352,8 +641,33 @@ temporal_stats_lq_app <- function() {
           )
         )
 
-      list(plot = p, peak_data = peak_data, train_data = train_data,
-           echeme_data = echeme_data, params = params)
+      # Add functionality to toggle the visibility of the Summary Statistics text box
+      p <- htmlwidgets::onRender(p, "
+  function(el, x) {
+    el.on('plotly_restyle', function(d) {
+      // We assume 'Summary Statistics' is the second trace (index 1)
+      var traceVisible = x.data[0].visible;
+      var annotations = x.layout.annotations;
+
+      // Toggle annotation visibility based on the 'Summary Statistics' trace visibility
+      if (traceVisible === true || traceVisible === undefined) {
+        annotations[0].visible = true;
+      } else {
+        annotations[0].visible = false;
+      }
+
+      // Apply the updated annotation visibility
+      Plotly.relayout(el, {annotations: annotations});
+    });
+  }
+")
+
+
+      return(list(plot = p,
+                  peak_data = peak_data,
+                  train_data = train_data,
+                  motif_data = motif_data,
+                  params = params))
     }
 
     # Observer to update available wave objects in the environment
@@ -383,13 +697,13 @@ temporal_stats_lq_app <- function() {
                margin = list(l = 80, r = 0, t = 80, b = 80))
     })
 
-    output$echeme_data <- renderDT({
+    output$motif_data <- renderDT({
       req(result())
-      datatable(result()$echeme_data,
+      datatable(result()$motif_data,
                 caption = htmltools::tags$caption(
                   style = "caption-side: top; text-align: center;",
                   class = "caption-top",
-                  "Echeme Data"
+                  "Motif Data"
                 ),
                 options = list(
                   pageLength = 1, lengthChange = FALSE, searching = FALSE, paging = FALSE, info = FALSE,
@@ -440,31 +754,15 @@ temporal_stats_lq_app <- function() {
     })
 
 
-    # Define the help modal dialog
-    observeEvent(input$help, {
-      showModal(modalDialog(
-        title = "Help - Parameter Information",
-        HTML("
-          <b>Smoothing Window:</b> Window size (samples) used to smooth the envelope.<br><br>
-          <b>Peakfinder Window:</b> Size of the moving window used for peak detection.<br><br>
-          <b>Peakfinder Threshold:</b> Amplitude threshold for identifying peaks based on their distance to the 'valleys'.<br><br>
-          <b>Max Train Gap:</b> Maximum gap allowed between trains to be considered in the same echeme.<br><br>
-          <b>Max Peak Gap (max_peak_gap):</b> Maximum gap allowed between consecutive peaks to be considered in the same train.<br>
-        "),
-        easyClose = TRUE,
-        footer = modalButton("Close")
-      ))
-    })
-
     output$saveData <- downloadHandler(
       filename = function() {
-        paste(input$specimen_id, "tempstats_data.xlsx", sep = "_")
+        paste(input$specimen_id, "tempstats_lq_data.xlsx", sep = "_")
       },
       content = function(file) {
         req(result())
         # Collect all data tables
         data_list <- list(
-          "Echeme Data" = result()$echeme_data,
+          "Motif Data" = result()$motif_data,
           "Train Data" = result()$train_data,
           "Peak Data" = result()$peak_data,
           "Parameter Data" = result()$params
@@ -472,6 +770,16 @@ temporal_stats_lq_app <- function() {
 
         # Write the list of data frames to an Excel file
         writexl::write_xlsx(data_list, path = file)
+      }
+    )
+
+    output$savePlot <- downloadHandler(
+      filename = function() {
+        paste0(input$specimen_id, "_tempstats_hq_plot.html")
+      },
+      content = function(file) {
+        req(temp_file)
+        file.copy(temp_file, file)
       }
     )
 

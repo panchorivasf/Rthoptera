@@ -55,29 +55,64 @@ spectral_stats_app <- function() {
                 margin: auto; /* Center the plot */
               }
 
+              .container {
+                   display: flex;
+                   flex-direction: row-reverse;
+                 }
+
               .dataTables_wrapper .caption-top {
               caption-side: top !important;
               font-weight: bold;
               color: white;
               }
 
-                 #submit {
-               border: 2px solid forestgreen; /* Green contour */
-               border-radius: 5px; /* Optional: Rounded corners */
+              #ampMax {
+              width: 80% !important;
+              margin-left: 6px!important;
+              margin-right: 6px !important;
               }
 
-                 #savePlot {
-              border: 2px solid dodgerblue; /* Blue contour */
-              border-radius: 5px; /* Optional: Rounded corners */
-                 }
-
-                 #close {
-              border: 2px solid red; /* Red contour */
-              padding: 5px 10px; /* Optional: Adjust padding */
-              border-radius: 5px; /* Optional: Rounded corners */
+              #dbth {
+              width:80% !important;
+              margin-right: 6px !important;
               }
 
-                "
+              #dataName {
+              width: 110% !important;
+              margin-right: 35px !important;
+              }
+
+              #savePlot {
+              margin-left: 6px !important;
+              margin-right: 6px !important;
+              }
+
+              #saveDataEnv {
+              margin-right: 6px !important;
+              }
+
+              #downloadData {
+              margin-right: 6px !important;
+              }
+
+              #submit {
+              border: 2px solid forestgreen;
+              border-radius: 5px;
+              }
+
+              #savePlot {
+              border: 2px solid dodgerblue;
+              border-radius: 5px;
+              margin-right: 6px;
+              }
+
+              #close {
+              border: 2px solid red;
+              padding: 5px 10px;
+              border-radius: 5px;
+              }
+
+            "
           )
         )),
 
@@ -98,16 +133,16 @@ spectral_stats_app <- function() {
                 checkboxInput("total", "Total Bandwidth", value = FALSE)),
                 checkboxInput("robust", "Robust", value = FALSE)
               ),
-              column(1, selectInput("ampMax", "Scale",
+              column(2, selectInput("ampMax", "Scale",
                                     choices = list("dB (max0)" = 0, "Linear" = 1),
                                     selected = 1)),
-              column(1, numericInput("dbth", "Threshold",
+              column(2, numericInput("dbth", "Threshold",
                                      value = -20,
                                      min = -3,
                                      max = -100,
                                      step = 1)),
-              column(2, textInput("dataName", "Name for data frame", value = "")),
-              column(2, downloadButton("savePlot", "Save HTML Plot")),
+              column(2, textInput("dataName", "Table name", value = "")),
+              column(1, downloadButton("savePlot", "Save Plot")),
               column(2, verticalLayout(
                 actionButton("saveDataEnv", "Table to R"),
                 downloadButton("downloadData", "Export CSV")
