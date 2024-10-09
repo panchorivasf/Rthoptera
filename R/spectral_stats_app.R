@@ -365,7 +365,7 @@ spectral_stats_app <- function() {
                bsPopover(
                  id = "robust_info",
                  title = "Robust",
-                 content = HTML("This option performs a robust analysis, where the frequency resolution is fixed at ~244.1 Hz, intended to reflect broad spectral structure, thus overlooking between individuals."),
+                 content = HTML("This option performs a robust analysis, where the frequency resolution is fixed at ~244.1 Hz, intended to reflect broad spectral structure, thus ignoring subtle differences between individuals."),
                  placement = "right",
                  trigger = "click",
                  options = list(container = "body")
