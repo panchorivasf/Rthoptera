@@ -171,7 +171,7 @@ temporal_stats_lq_app <- function() {
                  title = "Preset",
                  content = HTML(paste0("Optimized parameters for call patterns in particular taxa.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -194,7 +194,7 @@ temporal_stats_lq_app <- function() {
                  title = "Specimen ID",
                  content = HTML(paste0("A unique identifier for the specimen. For example, &#39GRYCAM_001&#39, is the &#39Alpha code&#39 for Gryllus campestris, specimen 001.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -221,7 +221,7 @@ temporal_stats_lq_app <- function() {
                  title = "Detection Threshold",
                  content = HTML(paste0("Set the threshold for detecting peaks. Any peak below this value will be discarded.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -246,7 +246,7 @@ temporal_stats_lq_app <- function() {
                  title = "Smoothing",
                  content = HTML(paste0("Window size (samples) used to smooth the envelope. A larger window will result in a smoother envelope.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -274,7 +274,7 @@ temporal_stats_lq_app <- function() {
                  title = "Peakfinder Window",
                  content = HTML(paste0("Window size (samples) used to find peaks along the envelope.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -302,7 +302,7 @@ temporal_stats_lq_app <- function() {
                  title = "Peakfinder Threshold",
                  content = HTML(paste0("The minimum distance between a valley and a peak. This distance is measured as a proportion relative to the maximum amplitude [0:1].")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -327,7 +327,7 @@ temporal_stats_lq_app <- function() {
                  title = "Max Peak Gap",
                  content = HTML(paste0("The maximum gap (in seconds) allowed between peaks to be considered as belonging to the same train.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -351,7 +351,7 @@ temporal_stats_lq_app <- function() {
                  title = "Max Train Gap",
                  content = HTML(paste0("The maximum gap (in seconds) allowed between trains to be grouped in the same motif.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                )
 

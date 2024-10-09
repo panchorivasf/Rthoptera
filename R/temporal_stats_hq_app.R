@@ -166,7 +166,7 @@ temporal_stats_hq_app <- function() {
                  title = "Preset",
                  content = HTML(paste0("Optimized parameters for call patterns in particular taxa.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -190,7 +190,7 @@ temporal_stats_hq_app <- function() {
                  title = "Specimen ID",
                  content = HTML(paste0("The Specimen ID is used to identify the individual specimen in your analysis.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -214,7 +214,7 @@ temporal_stats_hq_app <- function() {
                  title = "Smoothing Window Length",
                  content = HTML(paste0("Window size (samples) used to smooth the envelope. A larger window will result in a smoother envelope.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -237,7 +237,7 @@ temporal_stats_hq_app <- function() {
                  title = "Window Overlap",
                  content = HTML(paste0("Overlap percentage between successive windows during smoothing. Higher overlap results in more smoothing.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -264,7 +264,7 @@ temporal_stats_hq_app <- function() {
                  title = "Upper Detection Threshold",
                  content = HTML(paste0("Minimum amplitude (proportion) required for a train to be included in the analysis. Trains with maximum amplitude below this value will be excluded.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -291,7 +291,7 @@ temporal_stats_hq_app <- function() {
                  title = "Lower Detection Threshold",
                  content = HTML(paste0("Amplitude threshold as a proportion of the maximum amplitude. Only trains with an amplitude above this threshold will be detected.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
@@ -316,7 +316,7 @@ temporal_stats_hq_app <- function() {
                  title = "Max Train Gap",
                  content = HTML(paste0("Maximum gap allowed between trains to be considered in the same motif. If the gap exceeds this value, a new motif is started.")),
                  placement = "right",
-                 trigger = "hover",
+                 trigger = "click",
                  options = list(container = "body")
                ),
 
