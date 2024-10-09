@@ -4,10 +4,10 @@
 #'
 #' @return A Shiny app that analyzes temporal statistics of acoustic waveforms.
 #' @import shiny
+#' @import shinyBS
 #' @import dplyr
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
-#' @importFrom shinyBS bsButton bsPopover
 #' @importFrom plotly plot_ly add_lines layout renderPlotly
 #' @importFrom DT datatable renderDT
 #' @importFrom writexl write_xlsx

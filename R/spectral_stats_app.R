@@ -4,10 +4,10 @@
 #'
 #' @return A Shiny app for analyzing and visualizing spectral statistics of audio wave objects.
 #' @import shiny
+#' @import shinyBS
 #' @import ggplot2
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
-#' @importFrom shinyBS bsButton bsPopover
 #' @importFrom seewave meanspec sh
 #' @importFrom dplyr mutate
 #' @importFrom plotly plot_ly add_trace layout add_markers renderPlotly
