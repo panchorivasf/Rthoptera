@@ -23,7 +23,8 @@ Imports:
     tidyr,
     patchwork
 Depends: 
-    R (>= 2.10)
+    R (>= 2.10),
+    shinyBS
 Suggests: 
     knitr,
     rmarkdown
