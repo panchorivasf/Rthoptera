@@ -88,37 +88,71 @@ Rivas</h4>
 </h2>
 <p>There are many reasons why bioacousticians edit their recordings
 before analyzing them. This is especially true when working with field
-recordings, where non-target sounds may obscure or ‘soil’ the analyses,
-often occupying frequencies below the signal of interest. In other
-cases, the field recordist used an ultrasonic microphone and a high
-sampling rate (e.g., 128 kHz, 384 kHz) and the recorded insect happened
-to sing well below the Nyquist frequency (half the sampling rate).
-Sometimes the insect doesn’t call very often, forcing us to monitor for
-long periods of silence without stopping the recording. In all these
-cases, we will need to preprocess our recordings.
-<strong><em>Rthoptera</em></strong> offers functions to deal with most
-of these issues, minimizing the need for multiple software in your
-workflow.</p>
-<p>DISCLAIMER: R is not optimized for rendering large ammounts of data
-in plots. If you have long sound files (&gt; 1 min) recording at high
+recordings, where non-target sounds may obscure the analyses, often
+occupying frequencies below the signal of interest. In other cases, the
+field recordist used an ultrasonic microphone and a high sampling rate
+(e.g., 128 kHz, 384 kHz) and the recorded insect happened to sing well
+below the Nyquist frequency (half the sampling rate). Sometimes the
+insect doesn’t call very often, forcing us to monitor for long periods
+of silence without stopping the recording. In all these cases, we will
+need to preprocess our recordings. <strong><em>Rthoptera</em></strong>
+offers functions to deal with most of these issues, minimizing the need
+for multiple software in your workflow.</p>
+<p>DISCLAIMER: R is not optimized for rendering large amounts of data in
+plots. If you have long sound files (&gt; 1 min) recorded at high
 sampling rates (&gt; 48 kHz), you might want to subset them with a
 dedicated audio software before importing them into R. A popular free
 audio editor is Audacity.</p>
-<p>Run this code in the R console or in a new R script to open the
-<code>import_wave_app</code>, which will allow you to select, name and
-import sound files as R objects of class “Wave”.</p>
+<p>Run this code in R to open the <code>import_wave_app</code>, which
+will allow you to select, name and import sound files as R objects of
+class “Wave”.</p>
 <div class="sourceCode" id="section-cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Rthoptera</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/import_wave_app.html">import_wave_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Now you can use the different functions to preprocess the Wave before
+analysis. All the preprocessing apps in
+<strong><em>Rthoptera</em></strong> produce blueprint-like plots to
+remind users these are not intended for publication, but instead to aid
+in decision-making on the edits.</p>
+<p>As a rule of thumb, if you want to analyze several snippets of a
+recording separately, you should first evaluate if you need to do any
+filtering or downsampling before extracting the cuts to avoid repeating
+the process for each. If you want to analyze only a selection of the
+wave file, you might want to trim it before filtering, which will
+optimize processing time for the other editing steps.</p>
+<div class="section level3">
+<h3 id="section-trim">Trim<a class="anchor" aria-label="anchor" href="#section-trim"></a>
+</h3>
+<p>To trim a Wave, run the <code><a href="../reference/trim_app.html">trim_app()</a></code>, plot the
+oscillogram, select the portion you want to save, type a name for it,
+and save it. You can overwrite the original Wave by assigning the same
+name for the selection (this will not have any effect outside the R
+environment), or assign a new name to create a new Wave object.If you
+want to save several snippets of the same length, just drag the first
+selection to the desired position and assign a new name before
+saving.</p>
 </div>
-<div class="section level2">
-<h2 id="section-including-plots">Including Plots<a class="anchor" aria-label="anchor" href="#section-including-plots"></a>
-</h2>
-<p>You can also embed plots, for example:
-<img src="Preprocessing_files/figure-html/pressure-1.png" width="700"></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the
-code chunk to prevent printing of the R code that generated the
-plot.</p>
+<div class="section level3">
+<h3 id="section-downsample">Downsample<a class="anchor" aria-label="anchor" href="#section-downsample"></a>
+</h3>
+<p>If you think the sampling rate used to record an insect was
+unnecessarily high, use the <code><a href="../reference/downsample_app.html">downsample_app()</a></code> to verify this
+and downsample if appropriate. By design, the minimum Nyquist allowed
+for this in <code>Rthoptera</code> is 48 kHz. The other two options are
+96 kHz, and 192 kHz. For most crickets, 48 kHz Nyquist will suffice, but
+caution must be applied. Once the app has launched, select the Wave you
+want to analyze and click “Plot”. Now you can assess what is the maximum
+frequency of interest (MaxFOI) by hovering over the Mean Power Spectrum.
+If the MaxFOI is less than half of the Nyquist (maximum visible
+frequency in the plot), you can consider downsampling. Select the
+closest available value above the MaxFOI and click “Downsample”. For
+this example, we will use the “gryllus” Wave included with
+<strong><em>Rthoptera</em></strong>, a recording of <em>Gryllus
+campestris</em> made by Cesare Brizio in Italy.</p>
+<div class="sourceCode" id="section-cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gryllus"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/downsample_app.html">downsample_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
   </div>
 
