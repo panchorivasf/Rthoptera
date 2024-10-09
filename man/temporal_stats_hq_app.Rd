@@ -10,7 +10,7 @@ temporal_stats_hq_app()
 A Shiny app that analyzes temporal statistics of acoustic waveforms.
 }
 \description{
-This Shiny app performs temporal statistics analysis on wave objects with "HQ" sounds (i.e., near pure tones such as those made by most crickets). It allows the user to configure multiple parameters such as smoothing window, overlap, and detection thresholds to analyze the temporal patterns of acoustic signals. The app outputs interactive visualizations of the results and provides data tables summarizing elements, motifs, and summary statistics.
+This Shiny app performs temporal statistics analysis on wave objects with "HQ" sounds (i.e., near pure tones such as those made by most crickets). It allows the user to configure multiple parameters such as smoothing window, overlap, and detection thresholds to analyze the temporal patterns of acoustic signals. The app outputs interactive visualizations of the results and provides data tables summarizing trains, motifs, and summary statistics.
 }
 \examples{
  \dontrun{

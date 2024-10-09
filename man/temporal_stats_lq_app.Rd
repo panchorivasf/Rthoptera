@@ -10,7 +10,7 @@ temporal_stats_lq_app()
 A Shiny app for analyzing temporal statistics of acoustic waveforms.
 }
 \description{
-This Shiny app performs low-quality temporal statistics analysis on wave objects. It allows the user to configure parameters such as smoothing window, peak finder thresholds, and gap limits for trains and peaks. The app generates interactive plots and data tables summarizing echemes, trains, and peaks, along with parameter settings.
+This Shiny app performs low-quality temporal statistics analysis on wave objects. It allows the user to configure parameters such as smoothing window, peak finder thresholds, and gap limits for trains and peaks. The app generates interactive plots and data tables summarizing motifs, trains, and peaks, along with parameter settings.
 }
 \examples{
  \dontrun{

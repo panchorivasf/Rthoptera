@@ -1,9 +1,10 @@
 #' Temporal Statistics HQ Shiny App
 #'
-#' This Shiny app performs temporal statistics analysis on wave objects with "HQ" sounds (i.e., near pure tones such as those made by most crickets). It allows the user to configure multiple parameters such as smoothing window, overlap, and detection thresholds to analyze the temporal patterns of acoustic signals. The app outputs interactive visualizations of the results and provides data tables summarizing elements, motifs, and summary statistics.
+#' This Shiny app performs temporal statistics analysis on wave objects with "HQ" sounds (i.e., near pure tones such as those made by most crickets). It allows the user to configure multiple parameters such as smoothing window, overlap, and detection thresholds to analyze the temporal patterns of acoustic signals. The app outputs interactive visualizations of the results and provides data tables summarizing trains, motifs, and summary statistics.
 #'
 #' @return A Shiny app that analyzes temporal statistics of acoustic waveforms.
 #' @import shiny
+#' @import dplyr
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom shinyBS bsButton bsPopover
@@ -12,7 +13,6 @@
 #' @importFrom writexl write_xlsx
 #' @importFrom seewave env resamp
 #' @importFrom purrr map
-#' @importFrom dplyr n mutate filter lead group_by summarize ungroup select tibble rowwise
 #' @export
 #'
 #' @examples
@@ -158,7 +158,7 @@ temporal_stats_hq_app <- function() {
                                    icon = icon("circle-info"), style = "default",
                                    size = "extra-small", class = "btn-info")
                         ),
-                        selectInput("preset", label = NULL, choices = c("Default", "Cesare_Gryllus"), selected = "Default")
+                        selectInput("preset", label = NULL, choices = c("Tettigoniidae", "Gryllidae"), selected = "Gryllidae")
                  )
                ),
                bsPopover(
@@ -166,7 +166,7 @@ temporal_stats_hq_app <- function() {
                  title = "Preset",
                  content = HTML(paste0("Optimized parameters for call patterns in particular taxa.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -190,7 +190,7 @@ temporal_stats_hq_app <- function() {
                  title = "Specimen ID",
                  content = HTML(paste0("The Specimen ID is used to identify the individual specimen in your analysis.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -214,7 +214,7 @@ temporal_stats_hq_app <- function() {
                  title = "Smoothing Window Length",
                  content = HTML(paste0("Window size (samples) used to smooth the envelope. A larger window will result in a smoother envelope.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -237,7 +237,7 @@ temporal_stats_hq_app <- function() {
                  title = "Window Overlap",
                  content = HTML(paste0("Overlap percentage between successive windows during smoothing. Higher overlap results in more smoothing.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -251,16 +251,20 @@ temporal_stats_hq_app <- function() {
                                        size = "extra-small", class = "btn-info")
                             )
                         ),
-                        numericInput("upper_detection_threshold", label = NULL, value = 0.5,
-                                     min = 0.01, max = 0.99, step = 0.01)
+                        numericInput("upper_detection_threshold",
+                                     label = NULL,
+                                     value = 0.2,
+                                     min = 0.01,
+                                     max = 0.99,
+                                     step = 0.01)
                  )
                ),
                bsPopover(
                  id = "upDet_info",
                  title = "Upper Detection Threshold",
-                 content = HTML(paste0("Minimum amplitude (proportion) required for a element to be included in the analysis. Elements with maximum amplitude below this value will be excluded.")),
+                 content = HTML(paste0("Minimum amplitude (proportion) required for a train to be included in the analysis. Trains with maximum amplitude below this value will be excluded.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -275,16 +279,19 @@ temporal_stats_hq_app <- function() {
                                        size = "extra-small", class = "btn-info")
                             )
                         ),
-                        numericInput("lower_detection_threshold", label = NULL, value = 0.3,
-                                     min = 0.01, max = 0.99, step = 0.01)
+                        numericInput("lower_detection_threshold", label = NULL,
+                                     value = 0.1,
+                                     min = 0.01,
+                                     max = 0.99,
+                                     step = 0.01)
                  )
                ),
                bsPopover(
                  id = "loDet_info",
                  title = "Lower Detection Threshold",
-                 content = HTML(paste0("Amplitude threshold as a proportion of the maximum amplitude. Only elements with an amplitude above this threshold will be detected.")),
+                 content = HTML(paste0("Amplitude threshold as a proportion of the maximum amplitude. Only trains with an amplitude above this threshold will be detected.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -294,22 +301,22 @@ temporal_stats_hq_app <- function() {
                  column(12,
                         div(style = "display: flex; align-items: center;",
                             tagList(
-                              tags$label("Max Element Gap (s)"),
-                              bsButton("max_element_gap_info", label = "", lib="font-awesome",
+                              tags$label("Max Train Gap (s)"),
+                              bsButton("max_train_gap_info", label = "", lib="font-awesome",
                                        icon = icon("circle-info"), style = "default",
                                        size = "extra-small", class = "btn-info")
                             )
                         ),
-                        numericInput("max_element_gap", label = NULL, value = 0.08,
+                        numericInput("max_train_gap", label = NULL, value = 0.08,
                                      min = 0.01, max = 1, step = 0.01)
                  )
                ),
                bsPopover(
-                 id = "max_element_gap_info",
-                 title = "Max element Gap",
-                 content = HTML(paste0("Maximum gap allowed between elements to be considered in the same motif. If the gap exceeds this value, a new motif is started.")),
+                 id = "max_train_gap_info",
+                 title = "Max Train Gap",
+                 content = HTML(paste0("Maximum gap allowed between trains to be considered in the same motif. If the gap exceeds this value, a new motif is started.")),
                  placement = "right",
-                 trigger = "focus",
+                 trigger = "hover",
                  options = list(container = "body")
                ),
 
@@ -336,7 +343,7 @@ temporal_stats_hq_app <- function() {
                         withSpinner(plotlyOutput("audioPlot")),
                         DTOutput("summary_data"),
                         DTOutput("motif_data"),
-                        DTOutput("element_data"),
+                        DTOutput("train_data"),
                         # DTOutput("gap_data"),
                         DTOutput("params"),
                         style = "padding: 10px;"
@@ -351,12 +358,12 @@ temporal_stats_hq_app <- function() {
   server <- function(input, output, session) {
     temporal_stats_hq <- function(wave,
                                   specimen.id = "",
-                                  msmooth_window = 100,
-                                  msmooth_overlap = 0,
-                                  upper_detection_threshold = 0.5,
-                                  lower_detection_threshold = 0.3,
-                                  min_element_dur = 0.002,
-                                  max_element_gap = 0.05,
+                                  msmooth_window,
+                                  msmooth_overlap,
+                                  upper_detection_threshold,
+                                  lower_detection_threshold,
+                                  min_train_dur,
+                                  max_train_gap,
                                   norm.env = TRUE) {
 
       # library(plotly)
@@ -372,7 +379,7 @@ temporal_stats_hq_app <- function() {
         specimen.id = specimen.id,
         msmooth_window = msmooth_window,
         msmooth_overlap = msmooth_overlap,
-        max_element_gap = max_element_gap,
+        max_train_gap = max_train_gap,
         upper_detection_threshold = upper_detection_threshold,
         lower_detection_threshold = lower_detection_threshold,
         norm.env = norm.env
@@ -402,59 +409,59 @@ temporal_stats_hq_app <- function() {
       sample_rate <- wave@samp.rate
       time_vector <- seq(0, (length(wave@left) - 1) / sample_rate, length.out = length(envelope_vector))  # In seconds
 
-      # Detect elements based on the amplitude lower_detection_threshold
-      element_starts <- which(diff(c(0, envelope_vector >= amp_threshold, 0)) == 1)
-      element_ends <- which(diff(c(0, envelope_vector >= amp_threshold, 0)) == -1) - 1
+      # Detect trains based on the amplitude lower_detection_threshold
+      train_starts <- which(diff(c(0, envelope_vector >= amp_threshold, 0)) == 1)
+      train_ends <- which(diff(c(0, envelope_vector >= amp_threshold, 0)) == -1) - 1
 
       # Initialize data storage
-      elements <- list()
+      trains <- list()
 
-      for (i in seq_along(element_starts)) {
-        element_start <- time_vector[element_starts[i]]
-        element_end <- time_vector[element_ends[i]]
-        element_max_amp <- max(envelope_vector[element_starts[i]:element_ends[i]])
+      for (i in seq_along(train_starts)) {
+        train_start <- time_vector[train_starts[i]]
+        train_end <- time_vector[train_ends[i]]
+        train_max_amp <- max(envelope_vector[train_starts[i]:train_ends[i]])
 
-        # Exclude elements below upper_detection_threshold
-        if (element_max_amp < upper_detection_threshold) {
+        # Exclude trains below upper_detection_threshold
+        if (train_max_amp < upper_detection_threshold) {
           next
         }
 
-        # Append element to the list as a numeric vector
-        elements <- append(elements, list(c(element_start, element_end)))
+        # Append train to the list as a numeric vector
+        trains <- append(trains, list(c(train_start, train_end)))
       }
 
-      element_data <- tibble(
-        specimen.id = rep(specimen.id, length(elements)),
-        element.start = round(sapply(elements, `[[`, 1), 3),
-        element.end = round(sapply(elements, `[[`, 2), 3),
-        element.dur = round(sapply(elements, function(x) if (length(x) > 1) x[2] - x[1] else NA), 3)
+      train_data <- tibble(
+        specimen.id = rep(specimen.id, length(trains)),
+        train.start = round(sapply(trains, `[[`, 1), 3),
+        train.end = round(sapply(trains, `[[`, 2), 3),
+        train.dur = round(sapply(trains, function(x) if (length(x) > 1) x[2] - x[1] else NA), 3)
       ) %>%
-        dplyr::filter(!is.na(element.dur) & element.dur > min_element_dur)
+        dplyr::filter(!is.na(train.dur) & train.dur > min_train_dur)
 
-      # Calculate element.period and element.gap directly from element_data
-      element_data <- element_data %>%
+      # Calculate train.period and train.gap directly from train_data
+      train_data <- train_data %>%
         mutate(
-          element.period = round(lead(element.start) - element.start, 3),  # Period: next element.start - current element.start
-          element.gap = round(lead(element.start) - element.end, 3)        # Gap: next element.start - current element.end
+          train.period = round(lead(train.start) - train.start, 3),  # Period: next train.start - current train.start
+          train.gap = round(lead(train.start) - train.end, 3)        # Gap: next train.start - current train.end
         )
 
-      # Calculate element.id and motif.id based on element.gap and max_element_gap
-      element_data <- element_data %>%
+      # Calculate train.id and motif.id based on train.gap and max_train_gap
+      train_data <- train_data %>%
         mutate(
-          motif.id = cumsum(c(TRUE, element.gap[-n()] > max_element_gap)),
-          element.id = sequence(rle(cumsum(c(TRUE, element.gap[-n()] > max_element_gap)))$lengths)
+          motif.id = cumsum(c(TRUE, train.gap[-n()] > max_train_gap)),
+          train.id = sequence(rle(cumsum(c(TRUE, train.gap[-n()] > max_train_gap)))$lengths)
         )
 
       # Summarize motif data
-      motif_data <- element_data %>%
+      motif_data <- train_data %>%
         group_by(motif.id) %>%
         summarize(
-          motif.start = min(element.start),
-          motif.end = max(element.end),
+          motif.start = min(train.start),
+          motif.end = max(train.end),
           motif.dur = round(motif.end - motif.start, 3),
-          n.elements = n(),
-          element.rate = round(n() / motif.dur, 3),
-          duty.cycle = round(sum(element.dur) / motif.dur * 100, 1)
+          n.trains = n(),
+          train.rate = round(n() / motif.dur, 3),
+          duty.cycle = round(sum(train.dur) / motif.dur * 100, 1)
         ) %>%
         ungroup()
 
@@ -463,21 +470,25 @@ temporal_stats_hq_app <- function() {
         add_lines(x = ~time_vector, y = ~envelope_vector, name = "Summary Statistics",
                   hoverinfo = "none",  line = list(color = 'rgba(20, 20, 20, 0)',
                                                    width = 2), legendgroup = "Summary Stats") %>%
-        add_lines(x = ~time_vector, y = ~envelope_vector, name = "Envelope",
-                  hoverinfo = "none",  line = list(color = 'rgb(20, 20, 20)', width = 2)) %>%
+        add_lines(x = ~time_vector, y = ~envelope_vector,
+                  name = "Envelope",
+                  hoverinfo = "none",
+                  line = list(color = 'rgb(20, 20, 20)',
+                              width = 2,
+                              shape = 'spline')) %>%
         add_lines(x = c(min(time_vector), max(time_vector)), y = c(lower_detection_threshold, lower_detection_threshold),
                   name = "Lower Threshold", line = list(color = "#D55E00", dash = "dash"), showlegend = TRUE)
 
-      # Add element lines to the plot
-      for (i in seq_len(nrow(element_data))) {
-        element_start_time <- element_data$element.start[i]
-        element_end_time <- element_data$element.end[i]
+      # Add train lines to the plot
+      for (i in seq_len(nrow(train_data))) {
+        train_start_time <- train_data$train.start[i]
+        train_end_time <- train_data$train.end[i]
         show_legend <- if (i == 1) TRUE else FALSE
         p <- p %>%
-          add_lines(x = c(element_start_time, element_end_time), y = c(0.98, 0.98),
-                    name = "Elements", line = list(color = "#009E73", width = 6),
-                    showlegend = show_legend, legendgroup = "Elements",
-                    hoverinfo = "x", text = paste("Time:", round(c(element_start_time, element_end_time), 2)))
+          add_lines(x = c(train_start_time, train_end_time), y = c(0.98, 0.98),
+                    name = "Trains", line = list(color = "#009E73", width = 6),
+                    showlegend = show_legend, legendgroup = "trains",
+                    hoverinfo = "x", text = paste("Time:", round(c(train_start_time, train_end_time), 2)))
       }
 
       # Add motif lines to the plot
@@ -493,21 +504,34 @@ temporal_stats_hq_app <- function() {
       }
 
       motif_data <- motif_data %>%
-        select(motif.id, n.elements, everything())
+        select(motif.id, n.trains, everything())
 
       # Add proportions and complexity metrics
       motif_data <- motif_data %>%
         mutate(
           proportions = map(motif.id, function(eid) {
-            element_durations <- element_data %>% filter(motif.id == eid) %>% pull(element.dur)
-            gap_durations <- element_data %>% filter(motif.id == eid) %>% pull(element.gap)
+            train_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.dur)
+            gap_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.gap)
+            motif_start <- motif_data %>% filter(motif.id == eid) %>% pull(motif.start)
+            motif_end <- motif_data %>% filter(motif.id == eid) %>% pull(motif.end)
             motif_duration <- motif_data$motif.dur[eid]
             proportions <- numeric(0)
 
-            for (i in seq_along(element_durations)) {
-              proportions <- c(proportions, element_durations[i] / motif_duration)
-              if (i < length(element_durations) && !is.na(gap_durations[i]) && gap_durations[i] <= max_element_gap) {
-                proportions <- c(proportions, gap_durations[i] / motif_duration)
+            for (i in seq_along(train_durations)) {
+              # Add train duration as a proportion of the motif duration
+              proportions <- c(proportions, train_durations[i] / motif_duration)
+
+              # Check if the gap is not NA and falls within the motif start and end
+              if (!is.na(gap_durations[i])) {
+                gap_start <- train_data %>% filter(motif.id == eid) %>% pull(train.end) %>% dplyr::nth(i)
+                gap_end <- train_data %>% filter(motif.id == eid) %>% pull(train.start) %>% dplyr::nth(i + 1)
+
+                # Check if gap_start, gap_end, motif_start, and motif_end are not NA
+                if (!is.na(gap_start) && !is.na(gap_end) && !is.na(motif_start) && !is.na(motif_end)) {
+                  if (gap_start >= motif_start && gap_end <= motif_end) {
+                    proportions <- c(proportions, gap_durations[i] / motif_duration)
+                  }
+                }
               }
             }
 
@@ -515,39 +539,39 @@ temporal_stats_hq_app <- function() {
           })
         ) %>%
         rowwise() %>%
-        mutate(specimen.id = base::unique(element_data$specimen.id),
+        mutate(specimen.id = base::unique(train_data$specimen.id),
                props.sd = round(sd(unlist(proportions)), 3),
                props.ent = round(-sum(unlist(proportions)[unlist(proportions) > 0] * log(unlist(proportions)[unlist(proportions) > 0])), 3),
                props.mean = round(mean(unlist(proportions)), 3),
                props.cv = round((props.sd / props.mean), 3),
                props.diff.sd = round(sd(diff(unlist(proportions))), 3),
-               pci = round((props.ent * props.cv + sqrt(n.elements)) /  (sqrt(motif.dur) + 1), 3)
+               pci = round((props.ent * props.cv + sqrt(n.trains)) /  (sqrt(motif.dur) + 1), 3)
         ) %>%
         ungroup() %>%
         select(specimen.id, everything(), -proportions, proportions)
 
       # Prepare summary data
       summary_data <- tibble(
-        specimen.id = base::unique(element_data$specimen.id),
+        specimen.id = base::unique(train_data$specimen.id),
         n.motifs = nrow(motif_data),
-        n.elements = nrow(element_data),
-        mean.pci = round(mean(motif_data$pci, na.rm = TRUE),1),
-        sd.pci = round(sd(motif_data$pci, na.rm = TRUE),1),
+        n.trains = nrow(train_data),
+        mean.pci = round(mean(motif_data$pci, na.rm = TRUE),2),
+        sd.pci = round(sd(motif_data$pci, na.rm = TRUE),2),
         mean.duty.cycle = round(mean(motif_data$duty.cycle, na.rm = TRUE),1),
         sd.duty.cycle = round(sd(motif_data$duty.cycle, na.rm = TRUE),1),
         mean.ent = round(mean(motif_data$props.ent, na.rm = TRUE),1),
-        mean.elements.motif = round(mean(motif_data$n.elements, na.rm = TRUE),1),
-        sd.elements.motif = round(sd(motif_data$n.elements, na.rm = TRUE),1),
+        mean.trains.motif = round(mean(motif_data$n.trains, na.rm = TRUE),1),
+        sd.trains.motif = round(sd(motif_data$n.trains, na.rm = TRUE),1),
         mean.motif.dur = round(mean(motif_data$motif.dur, na.rm = TRUE),3),
         sd.motif.dur = round(sd(motif_data$motif.dur, na.rm = TRUE),3),
-        mean.element.rate = round(mean(motif_data$element.rate, na.rm = TRUE),1),
-        sd.element.rate = round(sd(motif_data$element.rate, na.rm = TRUE),1),
-        mean.element.dur = round(mean(element_data$element.dur, na.rm = TRUE), 3),
-        sd.element.dur = round(sd(element_data$element.dur, na.rm = TRUE), 3),
-        mean.element.per = round(mean(element_data$element.period[element_data$element.gap <= max_element_gap], na.rm = TRUE), 3),
-        sd.element.per = round(sd(element_data$element.period[element_data$element.gap <= max_element_gap], na.rm = TRUE), 3),
-        mean.gap.dur = round(mean(element_data$element.gap[element_data$element.gap <= max_element_gap], na.rm = TRUE), 3),
-        sd.gap.dur = round(sd(element_data$element.gap[element_data$element.gap <= max_element_gap], na.rm = TRUE), 3)
+        mean.train.rate = round(mean(motif_data$train.rate, na.rm = TRUE),1),
+        sd.train.rate = round(sd(motif_data$train.rate, na.rm = TRUE),1),
+        mean.train.dur = round(mean(train_data$train.dur, na.rm = TRUE), 3),
+        sd.train.dur = round(sd(train_data$train.dur, na.rm = TRUE), 3),
+        mean.train.per = round(mean(train_data$train.period[train_data$train.gap <= max_train_gap], na.rm = TRUE), 3),
+        sd.train.per = round(sd(train_data$train.period[train_data$train.gap <= max_train_gap], na.rm = TRUE), 3),
+        mean.gap.dur = round(mean(train_data$train.gap[train_data$train.gap <= max_train_gap], na.rm = TRUE), 3),
+        sd.gap.dur = round(sd(train_data$train.gap[train_data$train.gap <= max_train_gap], na.rm = TRUE), 3)
       )
 
       annotations <- list(
@@ -558,11 +582,11 @@ temporal_stats_hq_app <- function() {
           yref = 'paper',
           text = paste("<b> Summary Statistics</b>",
                        "<br> N. motifs: ", summary_data$n.motifs,
-                       "<br> Mean elements/motif: ", summary_data$mean.elements.motif,
+                       "<br> Mean trains/motif: ", summary_data$mean.trains.motif,
                        "<br> Mean motif duration: ", summary_data$mean.motif.dur, "s",
-                       "<br> Mean element duration: ", summary_data$mean.element.dur, "s",
-                       "<br> Mean element gap: ", summary_data$mean.gap.dur, "s",
-                       "<br> Mean element rate: ", summary_data$mean.element.rate, "pps",
+                       "<br> Mean train duration: ", summary_data$mean.train.dur, "s",
+                       "<br> Mean train gap: ", summary_data$mean.gap.dur, "s",
+                       "<br> Mean train rate: ", summary_data$mean.train.rate, "pps",
                        "<br> Mean duty cycle: ", summary_data$mean.duty.cycle,"%",
                        "<br> Mean entropy: ", summary_data$mean.ent,
                        "<br> Mean PCI: ", summary_data$mean.pci
@@ -609,23 +633,7 @@ temporal_stats_hq_app <- function() {
             t = 50
           )
         )
-      # p <- p %>%
-      #   layout(
-      #
-      #     annotations = list(
-      #       x = 0,
-      #       y = 1.1,
-      #       text = "NOTICE: Wave objects with a sampling rate
-      #       below 192 kHz are resampled to that value for consistent
-      #       time measurements. See documentation for details. ",
-      #       showarrow = FALSE,
-      #       xref = "paper",  # Position relative to the paper (the whole plot area)
-      #       yref = "paper",  # Position relative to the paper (the whole plot area)
-      #       xanchor = "center",
-      #       yanchor = "bottom",
-      #       font = list(size = 10, color = "black")  # Customize font if needed
-      #     )
-      #   )
+
 
       # Add functionality to toggle the visibility of the Summary Statistics text box
       p <- htmlwidgets::onRender(p, "
@@ -649,7 +657,7 @@ temporal_stats_hq_app <- function() {
 ")
 
       return(list(plot = p, summary_data = summary_data,
-                  element_data = element_data,
+                  train_data = train_data,
                   motif_data = motif_data,
                   params = params))
     }
@@ -669,33 +677,32 @@ temporal_stats_hq_app <- function() {
                         msmooth_overlap = as.numeric(isolate(input$msmooth_overlap)),
                         upper_detection_threshold = as.numeric(isolate(input$upper_detection_threshold)),
                         lower_detection_threshold = as.numeric(isolate(input$lower_detection_threshold)),
-                        min_element_dur = as.numeric(0.002),
-                        max_element_gap = as.numeric(isolate(input$max_element_gap)),
-                        norm.env = TRUE)#,
-      # plot.stats = isolate(input$show_annotations))
+                        min_train_dur = as.numeric(0.002),
+                        max_train_gap = as.numeric(isolate(input$max_train_gap)),
+                        norm.env = TRUE)
 
     })
 
 
     observeEvent(input$preset, {
 
-      if (input$preset == "Cesare_Gryllus") {
+      if (input$preset == "Gryllidae") {
 
         updateTextInput(session, "specimen_id", value = "")
         updateNumericInput(session, "msmooth_window", value = 100)
         updateNumericInput(session, "msmooth_overlap", value = 50)
         updateNumericInput(session, "lower_detection_threshold", value = 0.08)
-        updateNumericInput(session, "upper_detection_threshold", value = 0.5)
-        updateNumericInput(session, "max_element_gap", value = 0.08)
+        updateNumericInput(session, "upper_detection_threshold", value = 0.2)
+        updateNumericInput(session, "max_train_gap", value = 0.08)
 
-      } else if (input$preset == "Default") {
+      } else if (input$preset == "Tettigoniidae") {
 
         updateTextInput(session, "specimen_id", value = "")
-        updateNumericInput(session, "msmooth_window", value = 100)
+        updateNumericInput(session, "msmooth_window", value = 900)
         updateNumericInput(session, "msmooth_overlap", value = 50)
-        updateNumericInput(session, "upper_detection_threshold", value = 0.5)
-        updateNumericInput(session, "lower_detection_threshold", value = 0.3)
-        updateNumericInput(session, "max_element_gap", value = 0.1)
+        updateNumericInput(session, "upper_detection_threshold", value = 0.05)
+        updateNumericInput(session, "lower_detection_threshold", value = 0.02)
+        updateNumericInput(session, "max_train_gap", value = 0.1)
 
       }
     })
@@ -730,7 +737,7 @@ temporal_stats_hq_app <- function() {
                 caption = htmltools::tags$caption(
                   style = "caption-side: top; text-align: left;",
                   class = "caption-top",
-                  "motif Data"
+                  "Motif Data"
                 ),
                 options = list(
                   pageLength = 1, lengthChange = FALSE, searching = FALSE, paging = FALSE, info = FALSE,
@@ -738,9 +745,9 @@ temporal_stats_hq_app <- function() {
                 ))
     })
 
-    output$element_data <- renderDT({
+    output$train_data <- renderDT({
       req(result())
-      datatable(result()$element_data,
+      datatable(result()$train_data,
                 caption = htmltools::tags$caption(
                   style = "caption-side: top; text-align: left;",
                   class = "caption-top",
@@ -786,8 +793,8 @@ temporal_stats_hq_app <- function() {
         req(result())
         data_list <- list(
           "Summary" = result()$summary_data,
-          "motif Data" = result()$motif_data,
-          "element Data" = result()$element_data,
+          "Motif Data" = result()$motif_data,
+          "Train Data" = result()$train_data,
           "Parameters" = result()$params
         )
         writexl::write_xlsx(data_list, path = file)

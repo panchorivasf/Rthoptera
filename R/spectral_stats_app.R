@@ -1,12 +1,13 @@
 #' Spectral Statistics Shiny App
 #'
-#' This Shiny app allows users to analyze spectral statistics of audio data from wave objects. Users can select a wave object, input additional metadata (such as species name and sound type), and configure parameters for spectral analysis, including amplitude threshold and bandwidth. The app generates a Plotly plot of the spectrum, showing key spectral features such as peak frequency, bandwidth, and -20 dB threshold. Users can download the results in HTML or CSV format and save the data frame to the R environment.
+#' This Shiny app allows users to analyze spectral statistics of audio data from wave objects. Users can select a wave object, input additional metadata (such as Specimen ID and sound type), and configure parameters for spectral analysis, including amplitude threshold and bandwidth. The app generates a Plotly plot of the spectrum, showing key spectral features such as peak frequency, bandwidth, and -20 dB threshold. Users can download the results in HTML or CSV format and save the data frame to the R environment.
 #'
 #' @return A Shiny app for analyzing and visualizing spectral statistics of audio wave objects.
 #' @import shiny
 #' @import ggplot2
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
+#' @importFrom shinyBS bsButton bsPopover
 #' @importFrom seewave meanspec sh
 #' @importFrom dplyr mutate
 #' @importFrom plotly plot_ly add_trace layout add_markers renderPlotly
@@ -36,125 +37,352 @@ spectral_stats_app <- function() {
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
 
-        theme = bslib::bs_theme(bootswatch = "darkly"),
+        # theme = bslib::bs_theme(bootswatch = "darkly"),
 
         tags$head(tags$style(
           HTML(
             "
+              /* General body styling */
               body {
-                margin: 5px; /* Adds margin around the entire page */
-              }
-              .btn-group-vertical > .btn {
-                margin-bottom: 6px; /* Adds space between vertical buttons */
-              }
-              .row {
-                margin-bottom: 6px; /* Adds vertical space between rows */
-              }
-              .plotly {
-                width: 95%; /* Adjust plot width */
-                margin: auto; /* Center the plot */
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
               }
 
-              .container {
-                   display: flex;
-                   flex-direction: row-reverse;
-                 }
-
-              .dataTables_wrapper .caption-top {
-              caption-side: top !important;
-              font-weight: bold;
-              color: white;
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
               }
 
-              #ampMax {
-              width: 80% !important;
-              margin-left: 6px!important;
-              margin-right: 6px !important;
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
               }
 
-              #dbth {
-              width:80% !important;
-              margin-right: 6px !important;
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
               }
 
-              #dataName {
-              width: 110% !important;
-              margin-right: 35px !important;
-              }
-
-              #savePlot {
-              margin-left: 6px !important;
-              margin-right: 6px !important;
-              }
+              #run{
+               border: 2px solid forestgreen; /* Green contour */
+               padding: 5px 5px; /* Button (inside) padding */
+               border-radius: 5px; /* Rounded corners */
+                       }
 
               #saveDataEnv {
-              margin-right: 6px !important;
+                border: 2px solid dodgerblue; /* Blue contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Rounded corners */
+                margin-bottom: 5px !important; /* Space below the button */
+
               }
 
-              #downloadData {
-              margin-right: 6px !important;
+                #downloadData {
+                border: 2px solid dodgerblue; /* Blue contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Rounded corners */
+                margin-bottom: 5px !important; /* Space below the button */
+
               }
 
-              #submit {
-              border: 2px solid forestgreen;
-              border-radius: 5px;
-              }
 
               #savePlot {
-              border: 2px solid dodgerblue;
-              border-radius: 5px;
-              margin-right: 6px;
+                border: 2px solid dodgerblue; /* Blue contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Rounded corners */
+                margin-bottom: 5px !important; /* Space below the button */
+
               }
+
 
               #close {
-              border: 2px solid red;
-              padding: 5px 10px;
-              border-radius: 5px;
+                border: 2px solid red; /* Red contour */
+                padding: 5px 5px; /* Button (inside) padding */
+                border-radius: 5px; /* Rounded corners */
               }
 
+
+              .btn:hover, .btn-info:hover {
+                background-color: #5a6268;
+                border-color: #5a6268;
+              }
+
+              /* Styling for popovers */
+              .popover {
+                background-color: #ffffff;
+                border: 1px solid #252626;
+                color: #252626;
+              }
+
+
+               /* DataTables Styling */
+              .dataTables_wrapper .caption-top {
+                caption-side: top !important;
+                font-weight: bold;
+                color: #ffffff;
+              }
+
+              .dataTables_wrapper .dataTables_length,
+              .dataTables_wrapper .dataTables_filter,
+              .dataTables_wrapper .dataTables_info,
+              .dataTables_wrapper .dataTables_paginate,
+              .dataTables_wrapper .dataTables_processing {
+                color: #ffffff;
+              }
+
+              .dataTable thead th,
+              .dataTable tfoot th {
+                color: #ffffff;
+                border-color: #ffffff;
+              }
+
+              .dataTable tbody td {
+                color: #ffffff;
+                border-color: #ffffff;
+              }
+
+              /* Ensure horizontal lines in tables are white */
+              .dataTable tbody tr {
+                border-top: 1px solid #ffffff;
+                border-bottom: 1px solid #ffffff;
+              }
+
+              /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+              .input-with-info label {
+                margin-right: 5px;
+              }
             "
           )
         )),
 
-        sidebarLayout(
-          sidebarPanel(
-            width = 2,
-            selectInput("selectedWave", "Select a Wave Object:",
-                        choices = NULL, width = '100%'),
-            textInput("sp.name", "Species Name", value = ""),
-            textInput("sound.type", "Sound Type", value = "Calling song"),
-            numericInput("temp", "Temp (C)", value = NA, min = 0, max = 60, step = 0.1),
-            numericInput("hpf", "HPF (kHz)", value = NA, min = 0, max = 15, step = 1),
-            actionButton("submit", "Run Analysis")
-          ),
-          mainPanel(
-            fluidRow(
-              column(2, verticalLayout(
-                checkboxInput("total", "Total Bandwidth", value = FALSE)),
-                checkboxInput("robust", "Robust", value = FALSE)
-              ),
-              column(2, selectInput("ampMax", "Scale",
+        # This goes on the "Side" panel, which is replaced with a 'manual' configuration for flexibility
+        column(2,
+               fluidRow(
+                 column(12,
+                        selectInput("selectedWave", "Select a Wave Object:",
+                                    choices = NULL)
+                 )
+               ),
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("Specimen ID"),
+                          bsButton("specimen_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        textInput("specimen.id", label = NULL, value = "")
+                 )
+               ),
+               bsPopover(
+                 id = "specimen_info",
+                 title = "Specimen ID",
+                 content = HTML(paste0("A unique identifier for the specimen.")),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("Sound Type"),
+                          bsButton("soundtype_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        textInput("sound.type", label = NULL, value = "Calling song")
+                 )
+               ),
+               bsPopover(
+                 id = "soundtype_info",
+                 title = "Sound Type",
+                 content = HTML(paste0("The type of sound under analysis.")),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("Temperature (C)"),
+                          bsButton("temp_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        numericInput("temp",
+                                     label = NULL,
+                                     value = NA,
+                                     min = 0,
+                                     max = 60,
+                                     step = 0.1),
+                 )
+               ),
+               bsPopover(
+                 id = "temp_info",
+                 title = "Temperature",
+                 content = HTML(paste0("The ambient temperature at the moment of the recording, in degrees Celcius.")),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("HPF (kHz)"),
+                          bsButton("hpf_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        numericInput("hpf",
+                                     label = NULL,
+                                     value = 0,
+                                     min = 0,
+                                     max = 15,
+                                     step = 1),
+
+                 )
+               ),
+               bsPopover(
+                 id = "hpf_info",
+                 title = "High Pass Fiter",
+                 content = HTML(paste0("If appropriate, the High-Pass Filter (in kHz) applied to the Wave before the analysis.")),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("Scale"),
+                          bsButton("scale_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        selectInput("ampMax",
+                                    label = NULL,
                                     choices = list("dB (max0)" = 0, "Linear" = 1),
-                                    selected = 1)),
-              column(2, numericInput("dbth", "Threshold",
+                                    selected = 1)
+
+                 )
+               ),
+               bsPopover(
+                 id = "scale_info",
+                 title = "Scale",
+                 content = HTML(paste0("Select either decibel or linear scale. Both scales are normalized by the maximum amplitude value in the Wave. Linear scale has a range of  [0:1] and decibel scale is [-(min):0]")),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("Threshold"),
+                          bsButton("threshold_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        numericInput("dbth",
+                                     label = NULL,
                                      value = -20,
                                      min = -3,
                                      max = -100,
-                                     step = 1)),
-              column(2, textInput("dataName", "Table name", value = "")),
-              column(1, downloadButton("savePlot", "Save Plot")),
-              column(2, verticalLayout(
-                actionButton("saveDataEnv", "Table to R"),
-                downloadButton("downloadData", "Export CSV")
-              )),
-              column(1, actionButton("close", "Close App", style = 'white-space: nowrap;'))
-            ),
-            fluidRow(
-              div(style = "margin-top: 10px; margin-left: 10px; margin-right: 10px;",
-                  withSpinner(uiOutput("plotOutput"))),
-              withSpinner(DTOutput("dataOutput"))
-            )
-          )
+                                     step = 1)
+                 )
+               ),
+               bsPopover(
+                 id = "threshold_info",
+                 title = "Threshold",
+                 content = HTML(paste0("Select an amplitude threshold to be used for the calculation of Low- and High Frequency values. A common threshold is -20 dB below the peak, which in the linear scale is equivalent to 0.1.")),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               )
+
+        ),
+
+
+        # This goes on the "Main" panel
+        column(10,
+               fluidRow(
+                 column(12,
+                        column(2,
+                               fluidRow(
+                                 column(8, checkboxInput("total", "Total Bandwidth", value = FALSE)),
+                                 column(4, bsButton("total_bandwidth_info", label = "", lib="font-awesome",
+                                                    icon = icon("circle-info"), style = "margin-left: 1px;",
+                                                    size = "extra-small", class = "btn-info"))
+                               ),
+                               fluidRow(
+                                 column(8, checkboxInput("robust", "Robust", value = FALSE)),
+                                 column(4, bsButton("robust_info", label = "", lib="font-awesome",
+                                                    icon = icon("circle-info"), style = "default",
+                                                    size = "extra-small", class = "btn-info"))
+                               )
+                        ),
+                        column(2, actionButton("run", "Run Analysis")),
+                        column(2, textInput("dataName", "Table name", value = "")),
+                        column(2, verticalLayout(
+                          actionButton("saveDataEnv", "Table to R"),
+                          downloadButton("downloadData", "Export CSV"),
+                          downloadButton("savePlot", "Save Plot")
+                        )),
+                        column(1, actionButton("close", "Close App", style = 'white-space: nowrap;'))
+                 )
+               ),
+
+               # Popovers
+               bsPopover(
+                 id = "total_bandwidth_info",
+                 title = "Total Bandwidth",
+                 content = HTML("This option uses the first and last sample above the threshold to assess the frequency bandwidth of the signal, regardless of the gaps that might occur between the extremes and the peak frequency (i.e., where the sounds go below the amplitude threshold)."),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+               bsPopover(
+                 id = "robust_info",
+                 title = "Robust",
+                 content = HTML("Select this to perform a robust analysis, where a smaller window size is used at the expense of frequency resolution, which in turn should allow to overlook subtle differences between individuals, return more generalizable measurements."),
+                 placement = "right",
+                 trigger = "click",
+                 options = list(container = "body")
+               ),
+
+               fluidRow(
+                 column(12,
+                        div(style = "margin-top: 10px; margin-left: 10px; margin-right: 10px;",
+                            withSpinner(uiOutput("plotOutput")))
+                 )
+               ),
+
+               fluidRow(
+                 column(12,
+                        withSpinner(DTOutput("dataOutput"))
+                 )
+               )
         )
       )
     )
@@ -162,7 +390,7 @@ spectral_stats_app <- function() {
 
   server = function(input, output, session) {
     # Function definition
-    specStats <- function(wave, sp.name = "Species name",
+    specStats <- function(wave, specimen.id = "Specimen ID",
                           total.range = FALSE,
                           robust = FALSE, ampMax = 1,  dbth = -20,
                           lines = TRUE,
@@ -254,7 +482,7 @@ spectral_stats_app <- function() {
         layout(
           yaxis = list(range = ifelse(ampMax == 0, c(-50, 0), c(0, 1))),
           margin = list(l = 50, r = 50, t = 100, b = 50),
-          title = list(text = sprintf("<i>%s</i>", sp.name), x = 0, y = 1.1, xref = "paper", yref = "paper", xanchor = 'left', yanchor = 'top'),
+          title = list(text = sprintf("<i>%s</i>", specimen.id), x = 0, y = 1.1, xref = "paper", yref = "paper", xanchor = 'left', yanchor = 'top'),
           xaxis = list(title = "Frequency (kHz)"),
           yaxis = list(title = ifelse(ampMax == 1, "Relative Amplitude", "Amplitude (dB)")),
           annotations = list(
@@ -296,7 +524,7 @@ spectral_stats_app <- function() {
       q_factor <- peak_frequency / (maxfreq - minfreq)
 
       df <- tibble(
-        species = sp.name,
+        specimen.id = specimen.id,
         sound.type = sound.type,
         low.f = round(minfreq, 1),
         high.f = round(maxfreq, 1),
@@ -323,7 +551,7 @@ spectral_stats_app <- function() {
 
     # Update the title whenever the input changes
     observe({
-      values$speciesName <- input$sp.name
+      values$speciesName <- input$specimen.id
       values$callType <- input$sound.type
     })
 
@@ -347,12 +575,12 @@ spectral_stats_app <- function() {
 
 
     # This reactive expression will re-run only when the "Plot" button is clicked
-    result <- eventReactive(input$submit, {
+    result <- eventReactive(input$run, {
       req(input$selectedWave)
       wave <- get(input$selectedWave, envir = .GlobalEnv)
       specStats(
         wave = wave,
-        sp.name = input$sp.name,
+        specimen.id = input$specimen.id,
         sound.type = input$sound.type,
         temp = input$temp,
         hpf = input$hpf,

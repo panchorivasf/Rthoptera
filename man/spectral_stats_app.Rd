@@ -10,7 +10,7 @@ spectral_stats_app()
 A Shiny app for analyzing and visualizing spectral statistics of audio wave objects.
 }
 \description{
-This Shiny app allows users to analyze spectral statistics of audio data from wave objects. Users can select a wave object, input additional metadata (such as species name and sound type), and configure parameters for spectral analysis, including amplitude threshold and bandwidth. The app generates a Plotly plot of the spectrum, showing key spectral features such as peak frequency, bandwidth, and -20 dB threshold. Users can download the results in HTML or CSV format and save the data frame to the R environment.
+This Shiny app allows users to analyze spectral statistics of audio data from wave objects. Users can select a wave object, input additional metadata (such as Specimen ID and sound type), and configure parameters for spectral analysis, including amplitude threshold and bandwidth. The app generates a Plotly plot of the spectrum, showing key spectral features such as peak frequency, bandwidth, and -20 dB threshold. Users can download the results in HTML or CSV format and save the data frame to the R environment.
 }
 \examples{
  \dontrun{

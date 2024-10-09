@@ -152,6 +152,30 @@ temporal_stats_lq_app <- function() {
                         selectInput("selectedWave", "Select a Wave Object:", choices = NULL)
                  )
                ),
+
+               fluidRow(
+                 column(12,
+                        tagList(
+                          tags$label("Presets"),
+                          bsButton("preset_info", label = "", lib="font-awesome",
+                                   icon = icon("circle-info"), style = "default",
+                                   size = "extra-small", class = "btn-info")
+                        ),
+                        selectInput("preset", label = NULL,
+                                    choices = c("Tettigoniidae", "Gryllidae"),
+                                    selected = "Tettigoniidae")
+                 )
+               ),
+               bsPopover(
+                 id = "preset_info",
+                 title = "Preset",
+                 content = HTML(paste0("Optimized parameters for call patterns in particular taxa.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
+
                fluidRow(
                  column(12,
                         div(style = "display: flex; align-items: center;",
@@ -173,6 +197,34 @@ temporal_stats_lq_app <- function() {
                  trigger = "hover",
                  options = list(container = "body")
                ),
+
+               fluidRow(
+                 column(12,
+                        div(style = "display: flex; align-items: center;",
+                            tagList(
+                              tags$label("Detection Threshold"),
+                              bsButton("detection_threshold_info", label = "", lib="font-awesome",
+                                       icon = icon("circle-info"), style = "default",
+                                       size = "extra-small", class = "btn-info")
+                            )
+                        ),
+                        numericInput("detection_threshold",
+                                     label = NULL,
+                                     value = 0.01,
+                                     min = 0.001,
+                                     max = 1,
+                                     step = 0.001)
+                 )
+               ),
+               bsPopover(
+                 id = "detection_threshold_info",
+                 title = "Detection Threshold",
+                 content = HTML(paste0("Set the threshold for detecting peaks. Any peak below this value will be discarded.")),
+                 placement = "right",
+                 trigger = "hover",
+                 options = list(container = "body")
+               ),
+
 
 
                fluidRow(
@@ -331,14 +383,15 @@ temporal_stats_lq_app <- function() {
 
   server <- function(input, output, session) {
 
-    temporal_stats <- function(wave,
-                               specimen.id,
-                               ssmooth = 100,
-                               peakfinder_ws = 50,
-                               peakfinder_threshold = 0.005,
-                               max_train_gap = 0.5,
-                               max_peak_gap = 0.01,
-                               norm.env = TRUE) {
+    temporal_stats_lq <- function(wave,
+                                  specimen.id,
+                                  ssmooth = 100,
+                                  peakfinder_ws = 50,
+                                  peakfinder_threshold = 0.005,
+                                  max_train_gap = 0.5,
+                                  max_peak_gap = 0.01,
+                                  detection_threshold = 0.01,
+                                  norm.env = TRUE) {
 
       # Store input parameters in a tibble
       params <- tibble(
@@ -382,6 +435,12 @@ temporal_stats_lq_app <- function() {
       time_vector_ms <- time_vector * 1000  # Convert to milliseconds
 
       peaks <- peaks[peaks <= length(time_vector)]
+
+
+      # Filter out peaks below the detection threshold
+      peak_amplitudes <- envelope_vector[peaks]  # Get amplitudes of the detected peaks
+      valid_peaks <- which(peak_amplitudes >= detection_threshold)  # Only keep peaks above threshold
+      peaks <- peaks[valid_peaks]  # Update the peaks list
 
       peak_times_ms <- time_vector_ms[peaks]
 
@@ -453,16 +512,16 @@ temporal_stats_lq_app <- function() {
         summarize(
           train.start = round(min(peak.time),4),
           train.end = round(max(peak.time),4),
-          train.duration = round((train.end - train.start),3),
-          n.peaks = n(),
-          peak.rate = round((n() / ((max(peak.time) - min(peak.time))/1000)),1)
+          train.dur = round((train.end - train.start),3),
+          n.peaks = n()
         ) %>%
+        mutate(peak.rate = round((n.peaks / (train.dur/1000)),1)) %>%
         ungroup() %>%
         # Set last train.period of each motif to NA and round to 3 decimals
         mutate(train.period = ifelse(is.na(lead(motif.id)) | lead(motif.id) != motif.id, NA, lead(train.start) - train.start),
                train.gap = round(lead(train.start) - train.end, 3)        # Gap: next train.start - current train.end
         ) %>%
-        relocate(train.period, .after = train.duration) %>%
+        relocate(train.period, .after = train.dur) %>%
         relocate(train.gap, .after = train.period) %>%
         mutate(train.period = round(train.period,3))
 
@@ -474,26 +533,40 @@ temporal_stats_lq_app <- function() {
         summarize(
           motif.start = round(min(train.start),3),
           motif.end = round(max(train.end),3),
-          motif.duration = round(motif.end - motif.start,3),
+          motif.dur = round(motif.end - motif.start,3),
           motif.period = round((lead(motif.start) - motif.start),3),
           n.trains = n(),
+          # train.rate = round(n()/motif.dur),
           train.rate = round(n() / ((max(train.end)/1000) - (min(train.start)/1000)),1),
-          duty.cycle = round((sum(train.duration) / motif.duration)*100,2)
+          duty.cycle = round((sum(train.dur) / motif.dur)*100,2)
         ) %>%
         ungroup()
 
       motif_data <- motif_data %>%
         mutate(
           proportions = map(motif.id, function(eid) {
-            train_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.duration)
+            train_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.dur)
             gap_durations <- train_data %>% filter(motif.id == eid) %>% pull(train.gap)
-            motif_duration <- motif_data$motif.duration[eid]
+            motif_start <- motif_data %>% filter(motif.id == eid) %>% pull(motif.start)
+            motif_end <- motif_data %>% filter(motif.id == eid) %>% pull(motif.end)
+            motif_duration <- motif_data$motif.dur[eid]
             proportions <- numeric(0)
 
             for (i in seq_along(train_durations)) {
+              # Add train duration as a proportion of the motif duration
               proportions <- c(proportions, train_durations[i] / motif_duration)
-              if (i < length(train_durations) && !is.na(gap_durations[i]) && gap_durations[i] <= max_train_gap) {
-                proportions <- c(proportions, gap_durations[i] / motif_duration)
+
+              # Check if the gap is not NA and falls within the motif start and end
+              if (!is.na(gap_durations[i])) {
+                gap_start <- train_data %>% filter(motif.id == eid) %>% pull(train.end) %>% nth(i)
+                gap_end <- train_data %>% filter(motif.id == eid) %>% pull(train.start) %>% nth(i + 1)
+
+                # Check if gap_start, gap_end, motif_start, and motif_end are not NA
+                if (!is.na(gap_start) && !is.na(gap_end) && !is.na(motif_start) && !is.na(motif_end)) {
+                  if (gap_start >= motif_start && gap_end <= motif_end) {
+                    proportions <- c(proportions, gap_durations[i] / motif_duration)
+                  }
+                }
               }
             }
 
@@ -507,7 +580,7 @@ temporal_stats_lq_app <- function() {
                props.mean = round(mean(unlist(proportions)), 3),
                props.cv = round((props.sd / props.mean), 3),
                props.diff.sd = round(sd(diff(unlist(proportions))), 3),
-               pci = round((props.ent * props.cv + sqrt(n.trains)) /  (sqrt(motif.duration) + 1), 3)
+               pci = round((props.ent * props.cv + sqrt(n.trains)) /  (sqrt(motif.dur) + 1), 3)
         ) %>%
         ungroup() %>%
         select(specimen.id, everything(), -proportions, proportions)
@@ -521,14 +594,14 @@ temporal_stats_lq_app <- function() {
           yref = 'paper',
           text = paste("<b> Summary Statistics</b>",
                        "<br> N. motifs:", length(motifs),
-                       "<br> motif duration: ", round(mean(motif_data$motif.duration/1000),3), "s",
+                       "<br> motif duration: ", round(mean(motif_data$motif.dur/1000),3), "s",
                        "<br> Duty Cycle: ", round(mean(motif_data$duty.cycle),1), "%",
                        "<br> Trains / motif:", mean(motif_data$n.trains),
                        "<br> Train Rate: " , round(mean(motif_data$train.rate)), "tps",
-                       "<br> Train Duration: ", round(mean(train_data$train.duration, na.rm = TRUE)), "ms",
+                       "<br> Train Duration: ", round(mean(train_data$train.dur, na.rm = TRUE)), "ms",
                        "<br> Peaks / Train: ", round(mean(train_data$n.peaks, na.rm = TRUE)),
                        "<br> Peak Rate: ", round(mean(train_data$peak.rate, na.rm = TRUE)), "pps",
-                       "<br> Mean PCI: ", mean(motif_data$pci)),
+                       "<br> PCI: ", mean(motif_data$pci, 3)),
 
           showarrow = FALSE,
           font = list(size = 12),
@@ -541,36 +614,6 @@ temporal_stats_lq_app <- function() {
         )
       )
 
-
-      # annotations <- list(
-      #   list(
-      #     x = 0.01,
-      #     y = 0.01,
-      #     xref = 'paper',
-      #     yref = 'paper',
-      #     text = paste("<b> Summary Statistics</b>",
-      #                  "<br> N. motifs: ", summary_data$n.motifs,
-      #                  "<br> Mean elements/motif: ", summary_data$mean.elements.motif,
-      #                  "<br> Mean motif duration: ", summary_data$mean.motif.dur, "s",
-      #                  "<br> Mean element duration: ", summary_data$mean.element.dur, "s",
-      #                  "<br> Mean element gap: ", summary_data$mean.gap.dur, "s",
-      #                  "<br> Mean element rate: ", summary_data$mean.element.rate, "pps",
-      #                  "<br> Mean duty cycle: ", summary_data$mean.duty.cycle,"%",
-      #                  "<br> Mean entropy: ", summary_data$mean.ent,
-      #                  "<br> Mean PCI: ", summary_data$mean.pci
-      #     ),
-      #     showarrow = FALSE,
-      #     font = list(size = 12),
-      #     align = "left",
-      #     bgcolor = 'rgba(255, 255, 255, 0.8)',
-      #     bordercolor = 'rgba(0, 0, 0, 0.5)',
-      #     borderwidth = 1,
-      #     opacity = 1,
-      #     visible = TRUE
-      #   )
-      # )
-
-
       # Start the interactive plot
       p <- plot_ly() %>%
         add_lines(x = ~time_vector, y = ~envelope_vector, name = "Summary Statistics",
@@ -578,7 +621,8 @@ temporal_stats_lq_app <- function() {
                                                    width = 2), legendgroup = "Summary Stats") %>%
         add_lines(x = ~time_vector, y = ~envelope_vector, name = "Envelope",
                   hoverinfo = "none",  line = list(color = 'rgb(20, 20, 20)',
-                                                   width = 2))
+                                                   width = 2,
+                                                   shape = "spline"))
 
       # Add train lines to the plot
       for (i in seq_along(trains)) {
@@ -599,7 +643,7 @@ temporal_stats_lq_app <- function() {
         show_legend <- if (i == 1) TRUE else FALSE
         p <- p %>%
           add_lines(x = c(motif_start, motif_end), y = c(1, 1),
-                    name = "motifs", line = list(color = "#0072B2", width = 6),
+                    name = "Motifs", line = list(color = "#0072B2", width = 6),
                     showlegend = show_legend, legendgroup = "motifs",
                     hoverinfo = "x", text = paste("Time:", round(c(motif_start, motif_end), 2)))
       }
@@ -680,14 +724,42 @@ temporal_stats_lq_app <- function() {
     result <- eventReactive(input$run, {
       req(input$selectedWave)
       wave <- get(input$selectedWave, envir = .GlobalEnv)
-      temporal_stats(wave,
-                     specimen.id = input$specimen_id,
-                     ssmooth = input$ssmooth,
-                     peakfinder_ws = input$peakfinder_ws,
-                     peakfinder_threshold = input$peakfinder_threshold,
-                     max_train_gap = input$max_train_gap,
-                     max_peak_gap = input$max_peak_gap,
-                     norm.env = TRUE)
+      temporal_stats_lq(wave,
+                        specimen.id = input$specimen_id,
+                        ssmooth = input$ssmooth,
+                        peakfinder_ws = input$peakfinder_ws,
+                        peakfinder_threshold = input$peakfinder_threshold,
+                        max_train_gap = input$max_train_gap,
+                        max_peak_gap = input$max_peak_gap,
+                        detection_threshold = input$detection_threshold,
+                        norm.env = TRUE)
+    })
+
+    observeEvent(input$preset, {
+
+      if (input$preset == "Gryllidae") {
+
+        # updateTextInput(session, "specimen_id", value = "")
+        updateNumericInput(session, "ssmooth", value = 0)
+        updateNumericInput(session, "peakfinder_ws", value = 5)
+        updateNumericInput(session, "peakfinder_threshold", value = 0.05)
+        updateNumericInput(session, "max_peak_gap", value = 0.01)
+        updateNumericInput(session, "max_train_gap", value = 0.05)
+        updateNumericInput(session, "detection_threshold", value = 0.1)
+
+
+      } else if (input$preset == "Tettigoniidae") {
+
+        # updateTextInput(session, "specimen_id", value = "")
+        updateNumericInput(session, "ssmooth", value = 100)
+        updateNumericInput(session, "peakfinder_ws", value = 50)
+        updateNumericInput(session, "peakfinder_threshold", value = 0.01)
+        updateNumericInput(session, "max_peak_gap", value = 0.01)
+        updateNumericInput(session, "max_train_gap", value = 0.05)
+        updateNumericInput(session, "detection_threshold", value = 0.001)
+
+
+      }
     })
 
     output$audioPlot <- renderPlotly({
@@ -701,7 +773,7 @@ temporal_stats_lq_app <- function() {
       req(result())
       datatable(result()$motif_data,
                 caption = htmltools::tags$caption(
-                  style = "caption-side: top; text-align: center;",
+                  style = "caption-side: top; text-align: left;",
                   class = "caption-top",
                   "Motif Data"
                 ),
@@ -715,7 +787,7 @@ temporal_stats_lq_app <- function() {
       req(result())
       datatable(result()$train_data,
                 caption = htmltools::tags$caption(
-                  style = "caption-side: top; text-align: center;",
+                  style = "caption-side: top; text-align: left;",
                   class = "caption-top",
                   "Train Data"
                 ),
@@ -729,7 +801,7 @@ temporal_stats_lq_app <- function() {
       req(result())
       datatable(result()$peak_data,
                 caption = htmltools::tags$caption(
-                  style = "caption-side: top; text-align: center;",
+                  style = "caption-side: top; text-align: left;",
                   class = "caption-top",
                   "Peak Data"
                 ),
@@ -743,7 +815,7 @@ temporal_stats_lq_app <- function() {
       req(result())
       datatable(result()$params,
                 caption = htmltools::tags$caption(
-                  style = "caption-side: top; text-align: center;",
+                  style = "caption-side: top; text-align: left;",
                   class = "caption-top",
                   "Parameter Data"
                 ),
@@ -765,7 +837,7 @@ temporal_stats_lq_app <- function() {
           "Motif Data" = result()$motif_data,
           "Train Data" = result()$train_data,
           "Peak Data" = result()$peak_data,
-          "Parameter Data" = result()$params
+          "Parameters" = result()$params
         )
 
         # Write the list of data frames to an Excel file
@@ -775,7 +847,7 @@ temporal_stats_lq_app <- function() {
 
     output$savePlot <- downloadHandler(
       filename = function() {
-        paste0(input$specimen_id, "_tempstats_hq_plot.html")
+        paste(input$specimen_id, "tempstats_hq_plot.html", sep = "_")
       },
       content = function(file) {
         req(temp_file)
@@ -797,5 +869,11 @@ temporal_stats_lq_app <- function() {
   }
 
 
-  shinyApp(ui = ui, server = server)
+  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
 }
+
+
+
+
+
+
