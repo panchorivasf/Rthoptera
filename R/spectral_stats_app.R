@@ -264,7 +264,7 @@ spectral_stats_app <- function() {
                bsPopover(
                  id = "hpf_info",
                  title = "High Pass Fiter",
-                 content = HTML(paste0("If appropriate, the High-Pass Filter (in kHz) applied to the Wave before the analysis.")),
+                 content = HTML(paste0("If a High-Pass Filter was applied to the Wave before the analysis, inform which frequency was used, in kHz.")),
                  placement = "right",
                  trigger = "click",
                  options = list(container = "body")
@@ -289,7 +289,7 @@ spectral_stats_app <- function() {
                bsPopover(
                  id = "scale_info",
                  title = "Scale",
-                 content = HTML(paste0("Select either decibel or linear scale. Both scales are normalized by the maximum amplitude value in the Wave. Linear scale has a range of  [0:1] and decibel scale is [-(min):0]")),
+                 content = HTML(paste0("Select either decibel or linear scale. Both scales are normalized by the maximum amplitude value in the Wave. The ranges are [0:1] for the linear scale and [-(min):0] for the decibel scale.")),
                  placement = "right",
                  trigger = "click",
                  options = list(container = "body")
@@ -314,7 +314,7 @@ spectral_stats_app <- function() {
                bsPopover(
                  id = "threshold_info",
                  title = "Threshold",
-                 content = HTML(paste0("Select an amplitude threshold to be used for the calculation of Low- and High Frequency values. A common threshold is -20 dB below the peak, which in the linear scale is equivalent to 0.1.")),
+                 content = HTML(paste0("Select an amplitude threshold to be used for the calculation of the frequency bandwidth. A common threshold is -20 dB below the peak, which in the linear scale is equivalent to 0.1.")),
                  placement = "right",
                  trigger = "click",
                  options = list(container = "body")
@@ -356,7 +356,7 @@ spectral_stats_app <- function() {
                bsPopover(
                  id = "total_bandwidth_info",
                  title = "Total Bandwidth",
-                 content = HTML("This option uses the first and last sample above the threshold to assess the frequency bandwidth of the signal, regardless of the gaps that might occur between the extremes and the peak frequency (i.e., where the sounds go below the amplitude threshold)."),
+                 content = HTML("This option uses the first and last samples (from left to right) above the amplitude threshold to assess the frequency bandwidth of the signal, regardless of the gaps (i.e., where the sampled frequencies go below the threshold) that might occur between the extremes and the peak frequency."),
                  placement = "right",
                  trigger = "click",
                  options = list(container = "body")
@@ -365,7 +365,7 @@ spectral_stats_app <- function() {
                bsPopover(
                  id = "robust_info",
                  title = "Robust",
-                 content = HTML("Select this to perform a robust analysis, where a smaller window size is used at the expense of frequency resolution, which in turn should allow to overlook subtle differences between individuals, return more generalizable measurements."),
+                 content = HTML("This option performs a robust analysis, where the frequency resolution is fixed at ~244.1 Hz, intended to reflect broad spectral structure, thus overlooking between individuals."),
                  placement = "right",
                  trigger = "click",
                  options = list(container = "body")
