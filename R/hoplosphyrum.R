@@ -1,18 +1,12 @@
-#' Example Sound File 3
+#' Recording of Hoplosphyrum griseum
 #'
 #' The calling song of *Hoplosphyrum griseum*, a Mogoplistidae from Central Chile.
 #'
-#' This recording has sampling rate of 48 kHz.
-#' The sound file has been imported into an R object using
-#' the \code{\link[tuneR]{readWave}} function from the \pkg{tuneR} package.
+#' Sampling rate: 48 kHz.
 #'
-#' @format An object of class \code{\link[tuneR]{Wave}}. The Wave object contains:
-#' \describe{
-#'   \item{left}{The left audio channel (if stereo).}
-#'   \item{samp.rate}{The sampling rate in Hz.}
-#'   \item{bit}{The bit depth (e.g., 16 for CD quality).}
-#'   \item{duration}{The total duration of the sound file in seconds.}
-#' }
+#' Bit depth: 16 bit.
+#'
+#' Duration: ~23 sec.
 #'
 #' @source Original recording by Francisco Rivas Fuenzalida.
 #'

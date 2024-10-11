@@ -5,10 +5,10 @@
 \alias{gryllus}
 \title{Recording of Gryllus campestris}
 \format{
-An object of class \code{\link[tuneR]{Wave}}.
+An object of class \code{Wave} of length 217900.
 }
 \source{
-Original recording available at Xeno-canto: https://xeno-canto.org/753101.
+\url{https://xeno-canto.org/753101}.
 }
 \usage{
 gryllus

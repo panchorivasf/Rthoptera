@@ -3,29 +3,26 @@
 \docType{data}
 \name{tettigonia}
 \alias{tettigonia}
-\title{Example Sound File}
+\title{Recording of Tettigonia cantans}
 \format{
-An object of class \code{\link[tuneR]{Wave}}. The Wave object contains:
-\describe{
-  \item{left}{The left audio channel (if stereo).}
-  \item{samp.rate}{The sampling rate in Hz.}
-  \item{bit}{The bit depth (e.g., 16 for CD quality).}
-  \item{duration}{The total duration of the sound file in seconds.}
-}
+An object of class \code{Wave} of length 351058.
 }
 \source{
-Original recording by Cesare Brizio.
+\url{https://xeno-canto.org/922654}.
 }
 \usage{
 tettigonia
 }
 \description{
-The calling song of *Tettigonia cantans*, a Tettigoniidae from Europe and Central Asia.
-Available in Xeno-canto as: XC922654.
+The calling song of *Tettigonia cantans*, a Tettigoniidae from Europe and
+Central Asia recorded by Cesare Brizio in Italy.
+}
+\details{
 Sampling rate: 44.1 kHz.
+
 Bit depth: 16 bit.
-The sound file has been imported into an R object using
-the \code{\link[tuneR]{readWave}} function from the \pkg{tuneR} package.
+
+Duration: ~8 sec.
 }
 \examples{
  \dontrun{

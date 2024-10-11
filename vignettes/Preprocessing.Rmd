@@ -1,6 +1,6 @@
 ---
 title: "Preprocessing Audio"
-author: "Francisco Rivas"
+author: "an"
 date: "2024-10-02"
 output: html_document
 runtime: shiny
@@ -10,11 +10,11 @@ runtime: shiny
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## When and why to preprocess your recordings
+## When and how to preprocess your recordings
 
-There are many reasons why bioacousticians edit their recordings before analyzing them. This is especially true when working with field recordings, where non-target sounds may obscure the analyses, often occupying frequencies below the signal of interest. In other cases, the field recordist used an ultrasonic microphone and a high sampling rate (e.g., 128 kHz, 384 kHz) and the recorded insect happened to sing well  below the Nyquist frequency (half the sampling rate). Sometimes the insect doesn't call very often, forcing us to monitor for long periods of silence without stopping the recording. In all these cases, we will need to preprocess our recordings. ***Rthoptera*** offers functions to deal with most of these issues, minimizing the need for multiple software in your workflow. 
+There are many reasons why bioacousticians edit their recordings before analyzing them. This is especially true when working with field recordings, where non-target sounds may obscure the analyses, often occupying frequencies below the signal of interest. In other cases, the field recordist used an ultrasonic microphone and a high sampling rate (e.g., 128 kHz, 384 kHz) and the recorded insect happened to sing well  below the Nyquist frequency (half the sampling rate). Sometimes the insect doesn't call very often, forcing us to monitor for long periods of silence without stopping the recording. In all these cases, we might want to preprocess our recordings. ***Rthoptera*** offers functions to deal with most of these issues, minimizing the need for multiple software in your workflow. 
 
-DISCLAIMER: R is not optimized for rendering large amounts of data in plots. If you have long sound files (> 1 min) recorded at high sampling rates (> 48 kHz), you might want to subset them with a dedicated audio software before importing them into R. A popular free audio editor is Audacity. 
+DISCLAIMER: R is not optimized for rendering large amounts of data in plots. If you have long sound files (> 1 min) recorded at high sampling rates (> 48 kHz), you might want to subset them with a dedicated audio software before importing them into R, unless you have a lot of patience or a very capable computer. A popular free audio editor is Audacity. 
 
 Run this code in R to open the `import_wave_app`, which will allow you to select, name and import sound files as R objects of class "Wave". 
 
@@ -22,6 +22,18 @@ Run this code in R to open the `import_wave_app`, which will allow you to select
 library(Rthoptera)
 import_wave_app()
 ```
+
+In this guide, we will work with the example Wave objects included in the package. To load all of them, run this:
+
+```{r, echo=TRUE, eval=FALSE}
+load_wave_data()
+```
+
+If occasionally you want to work with a single file from the examples, you can run:
+```{r, echo=TRUE, eval=FALSE}
+data("tettigonia")
+```
+which will make the song of *Tettigonia cantans* available in the R environment. 
 
 Now you can use the different functions to preprocess the Wave before analysis. All the preprocessing apps in ***Rthoptera*** produce blueprint-like plots to remind users these are not intended for publication, but instead to aid in decision-making on the edits. 
 
@@ -31,11 +43,15 @@ As a rule of thumb, if you want to analyze several snippets of a recording separ
 To trim a Wave, run the `trim_app()`, plot the oscillogram, select the portion you want to save, type a name for it, and save it. You can overwrite the original Wave by assigning the same name for the selection (this will not have any effect outside the R environment), or assign a new name to create a new Wave object.If you want to save several snippets of the same length, just drag the first selection to the desired position and assign a new name before saving. 
 
 ### Downsample
-If you think the sampling rate used to record an insect was unnecessarily high, use the `downsample_app()` to verify this and downsample if appropriate. By design, the minimum Nyquist allowed for this in `Rthoptera` is 48 kHz. The other two options are 96 kHz, and 192 kHz. For most crickets, 48 kHz Nyquist will suffice, but caution must be applied. Once the app has launched, select the Wave you want to analyze and click "Plot". Now you can assess what is the maximum frequency of interest (MaxFOI) by hovering over the Mean Power Spectrum. If the MaxFOI is less than half of the Nyquist (maximum visible frequency in the plot), you can consider downsampling. Select the closest available value above the MaxFOI and click "Downsample". For this example, we will use the "gryllus" Wave included with ***Rthoptera***, a recording of *Gryllus campestris* made by Cesare Brizio in Italy.
+If you think the sampling rate used to record an insect was unnecessarily high, use the `downsample_app()` to verify this and downsample if appropriate. By design, the minimum Nyquist allowed for this in `Rthoptera` is 48 kHz. The other two options are 96 kHz, and 192 kHz. For most crickets, 48 kHz Nyquist will suffice, but caution must be applied. Once the app has launched, select the Wave you want to analyze and click "Plot". Now you can assess what is the maximum frequency of interest (MaxFOI) by hovering over the Mean Power Spectrum. If the MaxFOI is less than half of the Nyquist (maximum visible frequency in the plot), you can consider downsampling. Select the closest available value above the MaxFOI and click "Downsample". For this example, we will use the "melanogryllus" Wave included with ***Rthoptera***, a recording of *Melanogryllus desertus* made by Cesare Brizio in Italy. 
 
 ```{r, echo=TRUE, eval = FALSE}
-data("gryllus")
 downsample_app()
 ```
+
+### High-pass Filter
+
+If you believe that your recording has low-frequency noise, you should consider applying a high-pass filter (HPF). The `high_pass_filter_app` allows you to verify the presence of low-frequency noise and its range, helping to choose an appropriate HPF. A Mean Power Spectrum view should be used to determine whether the low-frequency noise has more energy than the signal of interest. If the latter is the case, the user should choose a proper cutoff frequency for the high-pass filter which will significantly attenuate the sounds below this threshold, allowing for accurate measurements and plotting of the signal of interest. The Spectrogram view is ideal for visually distinguishing the signal of interest from non-target signals (e.g., other, low-pitched crickets). Although the spectrogram takes longer to render, it allows to inspect temporal patterns that are not visible in the mean spectrum. The user can modify the contrast and window size to obtain a clearer image.
+
 
 

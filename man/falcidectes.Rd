@@ -3,7 +3,7 @@
 \docType{data}
 \name{falcidectes}
 \alias{falcidectes}
-\title{Song of Falcidectes divisus}
+\title{Recording of Falcidectes divisus}
 \format{
 An object of class \code{Wave} of length 411098.
 }
@@ -17,8 +17,6 @@ falcidectes
 The calling song of *Falcidectes sp.*, a Tettigoniidae from Central Chile.
 }
 \details{
-Channels: mono.
-
 Sampling rate: 96 kHz.
 
 Bit depth: 16 bit.

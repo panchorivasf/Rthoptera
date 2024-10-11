@@ -354,7 +354,6 @@ spectrogram_app <- function() {
       stopApp()
     })
 
-
   }
 
   shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))

@@ -1,8 +1,6 @@
-#' Song of Falcidectes divisus
+#' Recording of Falcidectes divisus
 #'
 #' The calling song of *Falcidectes sp.*, a Tettigoniidae from Central Chile.
-#'
-#' Channels: mono.
 #'
 #' Sampling rate: 96 kHz.
 #'

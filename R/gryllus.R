@@ -6,9 +6,7 @@
 #'
 #' Snippet duration: ~5 seconds.
 #'
-#' @format An object of class \code{\link[tuneR]{Wave}}.
-#'
-#' @source Original recording available at Xeno-canto: https://xeno-canto.org/753101.
+#' @source \url{https://xeno-canto.org/753101}.
 #'
 #' @examples
 #' \dontrun{

@@ -109,6 +109,16 @@ class “Wave”.</p>
 <div class="sourceCode" id="section-cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Rthoptera</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/import_wave_app.html">import_wave_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>In this guide, we will work with the example Wave objects included in
+the package. To load all of them, run this:</p>
+<div class="sourceCode" id="section-cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/load_wave_data.html">load_wave_data</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>If occasionally you want to work with a single file from the
+examples, you can run:</p>
+<div class="sourceCode" id="section-cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"tettigonia"</span><span class="op">)</span></span></code></pre></div>
+<p>which will make the song of <em>Tettigonia cantans</em> available in
+the R environment.</p>
 <p>Now you can use the different functions to preprocess the Wave before
 analysis. All the preprocessing apps in
 <strong><em>Rthoptera</em></strong> produce blueprint-like plots to
@@ -149,7 +159,7 @@ closest available value above the MaxFOI and click “Downsample”. For
 this example, we will use the “gryllus” Wave included with
 <strong><em>Rthoptera</em></strong>, a recording of <em>Gryllus
 campestris</em> made by Cesare Brizio in Italy.</p>
-<div class="sourceCode" id="section-cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="section-cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gryllus"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/downsample_app.html">downsample_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>

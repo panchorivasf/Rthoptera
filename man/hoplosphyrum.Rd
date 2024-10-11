@@ -3,15 +3,9 @@
 \docType{data}
 \name{hoplosphyrum}
 \alias{hoplosphyrum}
-\title{Example Sound File 3}
+\title{Recording of Hoplosphyrum griseum}
 \format{
-An object of class \code{\link[tuneR]{Wave}}. The Wave object contains:
-\describe{
-  \item{left}{The left audio channel (if stereo).}
-  \item{samp.rate}{The sampling rate in Hz.}
-  \item{bit}{The bit depth (e.g., 16 for CD quality).}
-  \item{duration}{The total duration of the sound file in seconds.}
-}
+An object of class \code{Wave} of length 1078355.
 }
 \source{
 Original recording by Francisco Rivas Fuenzalida.
@@ -23,9 +17,11 @@ hoplosphyrum
 The calling song of *Hoplosphyrum griseum*, a Mogoplistidae from Central Chile.
 }
 \details{
-This recording has sampling rate of 48 kHz.
-The sound file has been imported into an R object using
-the \code{\link[tuneR]{readWave}} function from the \pkg{tuneR} package.
+Sampling rate: 48 kHz.
+
+Bit depth: 16 bit.
+
+Duration: ~23 sec.
 }
 \examples{
 \dontrun{

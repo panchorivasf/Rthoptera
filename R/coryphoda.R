@@ -1,9 +1,10 @@
 #' Recording of Coryphoda albidicollis
 #'
-#' A single calling song of *Coryphoda albidicollis*, a Phaneropterinae from Central Chile.
+#' A single calling song of *Coryphoda albidicollis*, a Phaneropterinae recorded
+#' by Francisco Rivas in Central Chile.
 #'
-#' This sound was recorded at a sampling rate of 96 kHz.
-#' The ambient temperature was 22.6 degrees Celsius.
+#' Sampling rate: 96 kHz.
+#' Temperature: 22.6 (Celsius).
 #'
 #' @source Original recording by Francisco Rivas Fuenzalida.
 #'

@@ -1,18 +1,18 @@
-#' High-pass Filter Shiny App
+#' Band-pass Filter Shiny App
 #'
-#' This function launches a Shiny app that allows users to apply a high-pass filter to audio wave objects and visualize either the mean spectrum or the spectrogram. Users can select an existing wave object from the R environment, apply a filter, and save the filtered wave object with a new name. The app also provides options to visualize the mean spectrum or the spectrogram of the selected wave object.
+#' This function launches a Shiny app that allows users to visualize either the mean spectrum or the spectrogram before applying a frequency filter to a Wave object.
 #'
-#' @return A Shiny app interface for applying a high-pass filter and visualizing audio wave objects.
+#' @return A Shiny app interface for applying a frequency filter.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' # Launch the app
-#' high_pass_filter_app()
+#' band_pass_filter_app()
 #'
 #' # Example usage after launching the app:
 #' # 1. Select a wave object from the R environment.
-#' # 2. Specify the high-pass filter frequency in kHz.
+#' # 2. Specify the the limits of the band-pass filter (high-pass, low-pass) in kHz, as needed.
 #' # 3. Apply the filter and save the new wave object.
 #' }
 #' @import shiny
@@ -24,14 +24,14 @@
 #' @importFrom shinycssloaders withSpinner
 
 
-high_pass_filter_app <- function() {
+band_pass_filter_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
 
   ui = function(request) {
     tagList(
-      h1("High-pass Filter", style = "font-size: 28px; margin-left: 15px; margin-top: 0px; margin-bottom: 2px;"),
+      h1("Frequency Filter", style = "font-size: 28px; margin-left: 15px; margin-top: 0px; margin-bottom: 2px;"),
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
@@ -91,9 +91,11 @@ high_pass_filter_app <- function() {
           )
           ),
           column(1, verticalLayout(
-            numericInput("filterValue", "HPF (kHz)", value = 0, min = 0),
-            actionButton("applyFilter", "Apply Filter")
+            numericInput("highpass", "HPF (kHz)", value = NULL, min = 0),
+            numericInput("lowpass", "LPF (kHz", value = NULL, min = 1)
           )
+          ),
+          column(1, actionButton("applyFilter", "Apply Filter")
           ),
           column(2, verticalLayout(
             textInput("newName", "Name for new wave:", value = ""),
@@ -353,7 +355,8 @@ high_pass_filter_app <- function() {
       tryCatch({
         filtered_wave <- ffilter(
           waveObject(),
-          from = (input$filterValue) * 1000,
+          from = (input$highpass) * 1000,
+          to = (input$lowpass) * 1000,
           output = "Wave"
         )
         waveObject(filtered_wave)
