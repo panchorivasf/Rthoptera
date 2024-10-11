@@ -83,7 +83,7 @@
     
     
 <div class="section level2">
-<h2 id="section-when-and-how-to-preprocess-your-recordings">When and how to preprocess your recordings<a class="anchor" aria-label="anchor" href="#section-when-and-how-to-preprocess-your-recordings"></a>
+<h2 id="when-and-how-to-preprocess-your-recordings">When and how to preprocess your recordings<a class="anchor" aria-label="anchor" href="#when-and-how-to-preprocess-your-recordings"></a>
 </h2>
 <p>There are many reasons why bioacousticians edit their recordings
 before analyzing them. This is especially true when working with field
@@ -105,35 +105,37 @@ lot of patience or a very capable computer. A popular free audio editor
 is Audacity.</p>
 <p>Run this code in R to open the <code>import_wave_app</code>, which
 will allow you to select, name and import sound files as R objects of
-class “Wave”.</p>
-<div class="sourceCode" id="section-cb1"><pre class="downlit sourceCode r">
+class “Wave”. This app is based on <code>bioacoustics</code>’
+<code>read_audio()</code> function.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Rthoptera</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/import_wave_app.html">import_wave_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>In this guide, we will work with the example Wave objects included in
 the package. To load all of them, run this:</p>
-<div class="sourceCode" id="section-cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/load_wave_data.html">load_wave_data</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>If occasionally you want to work with a single file from the
-examples, you can run:</p>
-<div class="sourceCode" id="section-cb3"><pre class="downlit sourceCode r">
+<p>If occasionally you want to work with a single file of the included
+data, you can run, for example:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"tettigonia"</span><span class="op">)</span></span></code></pre></div>
 <p>which will make the song of <em>Tettigonia cantans</em> available in
 the R environment.</p>
 <p>Now you can use the different functions to preprocess the Wave before
-analysis. All the preprocessing apps in
-<strong><em>Rthoptera</em></strong> produce blueprint-like plots to
-remind users these are not intended for publication, but instead to aid
-in decision-making on the edits.</p>
+analysis, including trimming, filtering, and downsampling. All the
+preprocessing apps in <strong><em>Rthoptera</em></strong> produce
+blueprint-like plots to remind users that these are not intended for
+publication, but instead to aid in decision-making on the edits.</p>
 <p>As a rule of thumb, if you want to analyze several snippets of a
 recording separately, you should first evaluate if you need to do any
 filtering or downsampling before extracting the cuts to avoid repeating
-the process for each. If you want to analyze only a selection of the
+the process for each. If you want to analyze a single snippet from the
 wave file, you might want to trim it before filtering, which will
 optimize processing time for the other editing steps.</p>
 <div class="section level3">
-<h3 id="section-trim">Trim<a class="anchor" aria-label="anchor" href="#section-trim"></a>
+<h3 id="trim">Trim<a class="anchor" aria-label="anchor" href="#trim"></a>
 </h3>
-<p>To trim a Wave, run the <code><a href="../reference/trim_app.html">trim_app()</a></code>, plot the
+<p>This app is based on <code>tuneR</code>’s <code>extractWave()</code>
+function. To trim a Wave, run the <code><a href="../reference/trim_app.html">trim_app()</a></code>, plot the
 oscillogram, select the portion you want to save, type a name for it,
 and save it. You can overwrite the original Wave by assigning the same
 name for the selection (this will not have any effect outside the R
@@ -141,11 +143,18 @@ environment), or assign a new name to create a new Wave object.If you
 want to save several snippets of the same length, just drag the first
 selection to the desired position and assign a new name before
 saving.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/trim_app.html">trim_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>For the downsampling and band-passing examples, we will use the
+included “platycleis” Wave, a recording of <em>Platycleis grisea</em>
+made by Cesare Brizio in Italy.</p>
 </div>
 <div class="section level3">
-<h3 id="section-downsample">Downsample<a class="anchor" aria-label="anchor" href="#section-downsample"></a>
+<h3 id="downsample">Downsample<a class="anchor" aria-label="anchor" href="#downsample"></a>
 </h3>
-<p>If you think the sampling rate used to record an insect was
+<p>This app is based on <code>seewave</code>’s <code>resamp()</code>
+function.<br>
+If you think the sampling rate used to record an insect was
 unnecessarily high, use the <code><a href="../reference/downsample_app.html">downsample_app()</a></code> to verify this
 and downsample if appropriate. By design, the minimum Nyquist allowed
 for this in <code>Rthoptera</code> is 48 kHz. The other two options are
@@ -155,31 +164,31 @@ want to analyze and click “Plot”. Now you can assess what is the maximum
 frequency of interest (MaxFOI) by hovering over the Mean Power Spectrum.
 If the MaxFOI is less than half of the Nyquist (maximum visible
 frequency in the plot), you can consider downsampling. Select the
-closest available value above the MaxFOI and click “Downsample”. For
-this example, we will use the “melanogryllus” Wave included with
-<strong><em>Rthoptera</em></strong>, a recording of <em>Melanogryllus
-desertus</em> made by Cesare Brizio in Italy.</p>
-<div class="sourceCode" id="section-cb4"><pre class="downlit sourceCode r">
+closest available value above the MaxFOI and click “Downsample”.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/downsample_app.html">downsample_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="section-high-pass-filter">High-pass Filter<a class="anchor" aria-label="anchor" href="#section-high-pass-filter"></a>
+<h3 id="band-pass-filter">Band-pass Filter<a class="anchor" aria-label="anchor" href="#band-pass-filter"></a>
 </h3>
-<p>If you believe that your recording has low-frequency noise, you
-should consider applying a high-pass filter (HPF). The
-<code>high_pass_filter_app</code> allows you to verify the presence of
-low-frequency noise and its range, helping to choose an appropriate HPF.
-A Mean Power Spectrum view should be used to determine whether the
-low-frequency noise has more energy than the signal of interest. If the
-latter is the case, the user should choose a proper cutoff frequency for
-the high-pass filter which will significantly attenuate the sounds below
-this threshold, allowing for accurate measurements and plotting of the
-signal of interest. The Spectrogram view is ideal for visually
-distinguishing the signal of interest from non-target signals (e.g.,
-other, low-pitched crickets). Although the spectrogram takes longer to
-render, it allows to inspect temporal patterns that are not visible in
-the mean spectrum. The user can modify the contrast and window size to
-obtain a clearer image.</p>
+<p>This app is based on <code>seewave</code>’s <code>ffilter()</code>
+function. If you believe that your recording has low-frequency noise or
+non-target (e.g., other species) sounds, you should consider applying a
+band-pass filter (BPF). The <code>band_pass_filter_app</code> allows you
+to verify the presence of non-target sound and its range, helping to
+choose an appropriate BPF. A Mean Power Spectrum view should be used to
+determine whether a non-target sound or noise is above the -20dB
+threshold typically employed to assess the bandwidth of the signal of
+interest (SOI). If non-target sound is detected, the user should choose
+a proper combination of high-pass filter and low-pass filter values
+which will significantly attenuate the sounds below outside this range,
+allowing for accurate measure and plot the SOI. Although it takes longer
+to render, the spectrogram view may be necessary for field recordings
+where multiple species are detected, as it allows for visual
+discrimination of the SOI from non-target signals by inspecting their
+temporal patterns, which are not visible in the mean power spectrum.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/band_pass_filter_app.html">band_pass_filter_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </div>

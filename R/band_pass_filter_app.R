@@ -31,7 +31,7 @@ band_pass_filter_app <- function() {
 
   ui = function(request) {
     tagList(
-      h1("Frequency Filter", style = "font-size: 28px; margin-left: 15px; margin-top: 0px; margin-bottom: 2px;"),
+      h1("Band-pass Filter", style = "font-size: 28px; margin-left: 15px; margin-top: 0px; margin-bottom: 2px;"),
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
