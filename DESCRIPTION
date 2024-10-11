@@ -3,10 +3,10 @@ Type: Package
 Title: Analysis of acoustic signals from insects
 Version: 0.1.0
 Authors@R: c(
-            person("Francisco", "Rivas", email = "frivasfu@purdue.edu",
-                    role = c("cre", "aut"), comment = c(ORCID = "0000-0002-1256-2225")),
-            person("Cesare", "Brizio", role = c("aut")))
-Maintainer: Francisco Rivas  <fcorivasf@gmail.com>
+            person("Anonymous", "Anonymous", email = "anonymous@gmail.com",
+                    role = c("cre", "aut"), comment = c(ORCID = "0000-0000-0000-0000")),
+            person("Anonymous2", "Anonymous2", role = c("aut")))
+Maintainer: Anonymous  <anonymous@gmail.com>
 Description: The package provides a set of interactive functions (each one is a Shiny App) to analyze insect acoustic signals, including preprocessing (e.g., high-pass filter, remove DC offset, down-sampling, etc.). Analytical functions allow the user to automatically extract relevant acoustic features in both spectral and temporal dimensions. 
 License: CC BY-NC 4.0
 Encoding: UTF-8

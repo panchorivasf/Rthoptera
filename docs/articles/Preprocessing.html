@@ -71,8 +71,7 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Preprocessing Audio</h1>
-                        <h4 data-toc-skip class="author">Francisco
-Rivas</h4>
+                        <h4 data-toc-skip class="author">anonymous</h4>
             
             <h4 data-toc-skip class="date">2024-10-02</h4>
       
@@ -84,7 +83,7 @@ Rivas</h4>
     
     
 <div class="section level2">
-<h2 id="section-when-and-why-to-preprocess-your-recordings">When and why to preprocess your recordings<a class="anchor" aria-label="anchor" href="#section-when-and-why-to-preprocess-your-recordings"></a>
+<h2 id="section-when-and-how-to-preprocess-your-recordings">When and how to preprocess your recordings<a class="anchor" aria-label="anchor" href="#section-when-and-how-to-preprocess-your-recordings"></a>
 </h2>
 <p>There are many reasons why bioacousticians edit their recordings
 before analyzing them. This is especially true when working with field
@@ -94,15 +93,16 @@ field recordist used an ultrasonic microphone and a high sampling rate
 (e.g., 128 kHz, 384 kHz) and the recorded insect happened to sing well
 below the Nyquist frequency (half the sampling rate). Sometimes the
 insect doesn’t call very often, forcing us to monitor for long periods
-of silence without stopping the recording. In all these cases, we will
-need to preprocess our recordings. <strong><em>Rthoptera</em></strong>
+of silence without stopping the recording. In all these cases, we might
+want to preprocess our recordings. <strong><em>Rthoptera</em></strong>
 offers functions to deal with most of these issues, minimizing the need
 for multiple software in your workflow.</p>
 <p>DISCLAIMER: R is not optimized for rendering large amounts of data in
 plots. If you have long sound files (&gt; 1 min) recorded at high
 sampling rates (&gt; 48 kHz), you might want to subset them with a
-dedicated audio software before importing them into R. A popular free
-audio editor is Audacity.</p>
+dedicated audio software before importing them into R, unless you have a
+lot of patience or a very capable computer. A popular free audio editor
+is Audacity.</p>
 <p>Run this code in R to open the <code>import_wave_app</code>, which
 will allow you to select, name and import sound files as R objects of
 class “Wave”.</p>
@@ -156,12 +156,30 @@ frequency of interest (MaxFOI) by hovering over the Mean Power Spectrum.
 If the MaxFOI is less than half of the Nyquist (maximum visible
 frequency in the plot), you can consider downsampling. Select the
 closest available value above the MaxFOI and click “Downsample”. For
-this example, we will use the “gryllus” Wave included with
-<strong><em>Rthoptera</em></strong>, a recording of <em>Gryllus
-campestris</em> made by Cesare Brizio in Italy.</p>
+this example, we will use the “melanogryllus” Wave included with
+<strong><em>Rthoptera</em></strong>, a recording of <em>Melanogryllus
+desertus</em> made by Cesare Brizio in Italy.</p>
 <div class="sourceCode" id="section-cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gryllus"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/downsample_app.html">downsample_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/downsample_app.html">downsample_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="section-high-pass-filter">High-pass Filter<a class="anchor" aria-label="anchor" href="#section-high-pass-filter"></a>
+</h3>
+<p>If you believe that your recording has low-frequency noise, you
+should consider applying a high-pass filter (HPF). The
+<code>high_pass_filter_app</code> allows you to verify the presence of
+low-frequency noise and its range, helping to choose an appropriate HPF.
+A Mean Power Spectrum view should be used to determine whether the
+low-frequency noise has more energy than the signal of interest. If the
+latter is the case, the user should choose a proper cutoff frequency for
+the high-pass filter which will significantly attenuate the sounds below
+this threshold, allowing for accurate measurements and plotting of the
+signal of interest. The Spectrogram view is ideal for visually
+distinguishing the signal of interest from non-target signals (e.g.,
+other, low-pitched crickets). Although the spectrogram takes longer to
+render, it allows to inspect temporal patterns that are not visible in
+the mean spectrum. The user can modify the contrast and window size to
+obtain a clearer image.</p>
 </div>
 </div>
   </div>
@@ -176,7 +194,7 @@ campestris</em> made by Cesare Brizio in Italy.</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Francisco Rivas, Cesare Brizio.</p>
+<p>Developed by Anonymous Anonymous, Anonymous2 Anonymous2.</p>
 </div>
 
 <div class="pkgdown">
