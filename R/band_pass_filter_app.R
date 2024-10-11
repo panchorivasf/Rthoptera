@@ -92,7 +92,7 @@ band_pass_filter_app <- function() {
           ),
           column(1, verticalLayout(
             numericInput("highpass", "HPF (kHz)", value = NULL, min = 0),
-            numericInput("lowpass", "LPF (kHz", value = NULL, min = 1)
+            numericInput("lowpass", "LPF (kHz)", value = NULL, min = 1)
           )
           ),
           column(1, actionButton("applyFilter", "Apply Filter")
