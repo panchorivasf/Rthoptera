@@ -35,12 +35,45 @@ band_pass_filter_app <- function() {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = bslib::bs_theme(bootswatch = "darkly"),
+        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
-                 body {
-                margin: 5px; /* Adds margin around the entire page */
+               /* General body styling */
+              body {
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
+              }
+
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+                   /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+                 .input-with-info label {
+                margin-right: 5px;
               }
 
                 #audioPlot {
@@ -60,6 +93,7 @@ band_pass_filter_app <- function() {
                    #plotMeanSpectrum {
                border: 2px solid forestgreen; /* Blue contour */
                border-radius: 5px; /* Optional: Rounded corners */
+               margin-right: 5px !important;
               }
 
                      #plotSpectro {
@@ -69,7 +103,8 @@ band_pass_filter_app <- function() {
                  #saveEditedWave {
               border: 2px solid dodgerblue; /* Blue contour */
               border-radius: 5px; /* Optional: Rounded corners */
-                 }
+              margin-right: 5px !important;
+              }
 
                  #close {
               border: 2px solid red; /* Red contour */
@@ -81,18 +116,18 @@ band_pass_filter_app <- function() {
         )),
 
         fluidRow(
-          column(3,
+          column(2,
                  selectInput("selectedWave", "Select a wave object:",
                              choices = NULL, width = '100%')
           ),
-          column(1, verticalLayout(
+          column(2, verticalLayout(
             actionButton("plotMeanSpectrum", "Mean Spectrum"),
             actionButton("plotSpectro", "Spectrogram")
           )
           ),
           column(1, verticalLayout(
-            numericInput("highpass", "HPF (kHz)", value = NULL, min = 0),
-            numericInput("lowpass", "LPF (kHz)", value = NULL, min = 1)
+            numericInput("highpass", "HPF (kHz)", value = 0, min = 0),
+            numericInput("lowpass", "LPF (kHz)", value = 'NULL', min = 1)
           )
           ),
           column(1, actionButton("applyFilter", "Apply Filter")
@@ -140,6 +175,10 @@ band_pass_filter_app <- function() {
       tryCatch({
         newWave <- get(input$selectedWave, envir = .GlobalEnv)
         waveObject(newWave)
+
+        # Update the lowpass value to Nyquist frequency (wave@samp.rate / 2)
+        updateNumericInput(session, "lowpass", value = newWave@samp.rate / 2000)  # Divide by 2000 to convert Hz to kHz
+
       }, error = function(e) {
         showModal(modalDialog(
           title = "Error",
@@ -181,17 +220,18 @@ band_pass_filter_app <- function() {
     observeEvent(input$applyFilter, {
       req(waveObject())
       tryCatch({
-        filtered_wave <- ffilter(
+        filtered_wave <- seewave::ffilter(
           waveObject(),
-          from = (input$highpass) * 1000,
-          to = (input$lowpass) * 1000,
+          from = isolate(input$highpass) * 1000,
+          to = isolate(input$lowpass) * 1000,
+          bandpass = TRUE,
           output = "Wave"
         )
         waveObject(filtered_wave)
       }, error = function(e) {
         showModal(modalDialog(
           title = "Error",
-          "Failed to apply the high-pass filter. Please try again.",
+          "Failed to apply the band-pass filter. Please try again.",
           easyClose = TRUE,
           footer = modalButton("OK")
         ))

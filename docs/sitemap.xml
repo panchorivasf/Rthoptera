@@ -18,6 +18,7 @@
 <url><loc>/reference/import_wave_app.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/load_wave_data.html</loc></url>
+<url><loc>/reference/meanspectrum_plotly.html</loc></url>
 <url><loc>/reference/melanogryllus.html</loc></url>
 <url><loc>/reference/multioscillo_app.html</loc></url>
 <url><loc>/reference/multiplot_app.html</loc></url>
@@ -27,6 +28,7 @@
 <url><loc>/reference/platycleis.html</loc></url>
 <url><loc>/reference/spectral_stats_app.html</loc></url>
 <url><loc>/reference/spectrogram_app.html</loc></url>
+<url><loc>/reference/spectrogram_plotly.html</loc></url>
 <url><loc>/reference/spectrum_df.html</loc></url>
 <url><loc>/reference/spectrum_plotly.html</loc></url>
 <url><loc>/reference/spectrum_plot_app.html</loc></url>

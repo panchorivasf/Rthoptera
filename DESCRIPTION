@@ -1,6 +1,6 @@
 Package: Rthoptera
 Type: Package
-Title: Analysis of acoustic signals from insects
+Title: Standardized Insect Bioacoustics
 Version: 0.1.0
 Authors@R: c(
             person("Anonymous", "Anonymous", email = "anonymous@gmail.com",
