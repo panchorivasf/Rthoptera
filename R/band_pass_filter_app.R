@@ -35,7 +35,6 @@ band_pass_filter_app <- function() {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
@@ -127,7 +126,7 @@ band_pass_filter_app <- function() {
           ),
           column(1, verticalLayout(
             numericInput("highpass", "HPF (kHz)", value = 0, min = 0),
-            numericInput("lowpass", "LPF (kHz)", value = 'NULL', min = 1)
+            numericInput("lowpass", "LPF (kHz)", value = 48, min = 1)
           )
           ),
           column(1, actionButton("applyFilter", "Apply Filter")
