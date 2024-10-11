@@ -31,14 +31,51 @@ spectrum_plot_app <- function() {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = bslib::bs_theme(bootswatch = "darkly"),
+        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(
           tags$style(
             HTML(
               "
+                      /* General body styling */
               body {
+                background-color: #252626;
+                color: #ffffff;
                 margin: 5px;
               }
+
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+    .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
               #specPlot {
                 height: calc(100vh - 120px);
                 width: 100%;

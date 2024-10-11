@@ -61,6 +61,21 @@ temporal_stats_hq_app <- function() {
                 color: #ffffff;
               }
 
+    .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
+
+
               #run {
                border: 2px solid forestgreen; /* Blue contour */
                padding: 5px 5px; /* Button (inside) padding */

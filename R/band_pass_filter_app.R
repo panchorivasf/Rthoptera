@@ -73,7 +73,21 @@ band_pass_filter_app <- function() {
 
                  .input-with-info label {
                 margin-right: 5px;
-              }
+                 }
+
+                  .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
 
                 #audioPlot {
                 height: calc(100vh - 120px); /* Adjusts height taking into account other elements */

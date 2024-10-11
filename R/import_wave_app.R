@@ -26,13 +26,60 @@ import_wave_app <- function() {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = bslib::bs_theme(bootswatch = "darkly"),
+        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
-          body {
-            margin: 5px; /* Adds margin around the entire page */
-          }
+                     /* General body styling */
+              body {
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
+              }
+
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+                   /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+                 .input-with-info label {
+                margin-right: 5px;
+                 }
+
+                  .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
           .btn-group-vertical > .btn {
             margin-bottom: 5px; /* Adds space between vertical buttons */
           }

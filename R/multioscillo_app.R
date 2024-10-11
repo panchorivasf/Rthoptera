@@ -20,7 +20,7 @@
 #' \dontrun{
 #' multioscillo_app()
 #'}
-multioscillo_app <- function(dark.mode=TRUE) {
+multioscillo_app <- function() {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -30,13 +30,50 @@ multioscillo_app <- function(dark.mode=TRUE) {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = if (dark.mode) bslib::bs_theme(bootswatch = "darkly") else NULL,
+        # theme = if (dark.mode) bslib::bs_theme(bootswatch = "darkly") else NULL,
         tags$head(tags$style(
           HTML(
             "
+                      /* General body styling */
               body {
-                margin: 5px; /* Adds margin around the entire page */
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
               }
+
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+    .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
               .btn-group-vertical > .btn {
                 margin-bottom: 5px; /* Space between vertical buttons */
               }

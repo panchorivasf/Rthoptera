@@ -36,9 +36,6 @@ spectral_stats_app <- function() {
         title = "Spectral Statistics",
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-
-        # theme = bslib::bs_theme(bootswatch = "darkly"),
-
         tags$head(tags$style(
           HTML(
             "
@@ -68,6 +65,21 @@ spectral_stats_app <- function() {
                 border-color: #6c757d;
                 color: #ffffff;
               }
+
+    .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
+
 
               #run{
                border: 2px solid forestgreen; /* Green contour */

@@ -31,7 +31,8 @@ trim_app <- function() {
         tags$head(tags$style(
           HTML(
             "
-                    body {
+               /* General body styling */
+              body {
                 background-color: #252626;
                 color: #ffffff;
                 margin: 5px;
@@ -56,6 +57,20 @@ trim_app <- function() {
                 border-color: #6c757d;
                 color: #ffffff;
               }
+
+    .modal-content {
+      background-color: #252626;
+      color: #ffffff;
+    }
+    .modal-header, .modal-footer {
+      background-color: #343a40;
+      color: #ffffff;
+      border-bottom: 1px solid #6c757d;
+    }
+    .modal-body {
+      background-color: #252626;
+      color: #ffffff;
+    }
 
                 #audioPlot {
                 height: calc(100vh - 120px); /* Adjusts height taking into account other elements */
