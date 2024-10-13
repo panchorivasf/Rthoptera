@@ -7,6 +7,8 @@
 #' @param scale Scale for the amplitude. Either "dB" or "Linear".
 #'
 #' @return A plot with aligned spectrogram, mean spectrum, and oscillogram.
+#'
+#' @import patchwork
 #' @export
 #'
 #' @examples
