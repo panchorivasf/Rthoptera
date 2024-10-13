@@ -2,7 +2,7 @@
 % Please edit documentation in R/multiplot_app.R
 \name{multiplot_app}
 \alias{multiplot_app}
-\title{Spectrogram, Oscillogram, and Mean Power Spectrum Multiplot Shiny App}
+\title{Multiplot (Spectrogram, Oscillogram, and Mean Power Spectrum) Shiny App}
 \usage{
 multiplot_app()
 }

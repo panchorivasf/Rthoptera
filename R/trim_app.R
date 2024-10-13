@@ -106,7 +106,7 @@ trim_app <- function() {
         )),
 
         fluidRow(
-          column(3,
+          column(2,
                  selectInput("selectedWave", "Select a wave object:",
                              choices = NULL, width = '100%')
                  # actionButton("refresh", "Refresh List"),
