@@ -18,7 +18,7 @@ multiplot_ggplot <- function(wave,
                              overlap = 95,
                              zeropad = 200,
                              scale = "dB",
-                             heights = c(8,2)) {
+                             heights = c(7,2)) {
 
   floor = as.numeric(floor)
 
@@ -31,7 +31,10 @@ multiplot_ggplot <- function(wave,
 
   oscillo_plot <- oscillogram_ggplot(wave)
 
-  final_plot <- (combined_spect_mean / (oscillo_plot + plot_spacer() + plot_layout(ncol = 2, widths = c(5, 0.5)))+plot_layout(heights = heights))
+  # final_plot <- (combined_spect_mean / (oscillo_plot + plot_spacer() + plot_layout(ncol = 2, widths = c(5, 0.5)))+plot_layout(heights = heights))
+  final_plot <- combined_spect_mean /
+    (oscillo_plot + plot_spacer() + plot_layout(ncol = 2, widths = c(5, 0.5))) +
+    plot_layout(heights = heights)
 
   return(final_plot)
 }
