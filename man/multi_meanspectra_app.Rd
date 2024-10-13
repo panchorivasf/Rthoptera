@@ -4,7 +4,10 @@
 \alias{multi_meanspectra_app}
 \title{Multi-Mean Spectra Shiny App}
 \usage{
-multi_meanspectra_app()
+multi_meanspectra_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app for visualizing and downloading multi-selection mean spectra and oscillograms.

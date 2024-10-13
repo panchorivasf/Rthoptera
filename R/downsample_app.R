@@ -2,6 +2,8 @@
 #'
 #' This function launches a Shiny app that allows users to downsample audio (wave objects) and visualize the mean spectrum. Users can select an existing wave object from the R environment, specify a new maximum frequency (kHz), downsample the audio, and save the downsampled wave object with a new name.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @param input Internal Shiny parameter for handling input values.
 #' @param output Internal Shiny parameter for rendering outputs in the app.
 #' @param session Internal Shiny parameter for managing the app session.
@@ -20,7 +22,7 @@
 #' downsample_app()
 #' }
 
-downsample_app <- function() {
+downsample_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -365,5 +367,17 @@ downsample_app <- function() {
     })
 
   }
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+
+
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
+
 }

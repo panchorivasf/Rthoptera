@@ -2,6 +2,8 @@
 #'
 #' This function launches a Shiny app that allows users to import and process audio files (WAV, MP3, or WAC format) into the R environment. The app supports stereo audio by allowing the user to select a channel (left or right) for processing, and it automatically removes any offset in the wave object. Users can assign a custom name to the processed wave object, which is then saved in the global environment.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return This function launches a Shiny app for importing audio files. The processed wave object is saved to the global environment with the name provided by the user.
 #' @export
 #' @import shiny
@@ -16,7 +18,7 @@
 #' # Launch the app
 #' import_wave_app()
 #' }
-import_wave_app <- function() {
+import_wave_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -26,11 +28,10 @@ import_wave_app <- function() {
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
-                     /* General body styling */
+              /* General body styling */
               body {
                 background-color: #252626;
                 color: #ffffff;
@@ -67,19 +68,35 @@ import_wave_app <- function() {
                 margin-right: 5px;
                  }
 
-                  .modal-content {
-      background-color: #252626;
-      color: #ffffff;
-    }
-    .modal-header, .modal-footer {
-      background-color: #343a40;
-      color: #ffffff;
-      border-bottom: 1px solid #6c757d;
-    }
-    .modal-body {
-      background-color: #252626;
-      color: #ffffff;
-    }
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
           .btn-group-vertical > .btn {
             margin-bottom: 5px; /* Adds space between vertical buttons */
           }
@@ -224,5 +241,14 @@ import_wave_app <- function() {
 
   }
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }

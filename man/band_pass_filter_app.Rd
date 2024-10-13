@@ -4,7 +4,10 @@
 \alias{band_pass_filter_app}
 \title{Band-pass Filter Shiny App}
 \usage{
-band_pass_filter_app()
+band_pass_filter_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app interface for applying a frequency filter.

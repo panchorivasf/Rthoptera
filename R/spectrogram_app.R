@@ -2,6 +2,8 @@
 #'
 #' This Shiny app allows users to generate a standardized-resolution spectrogram from a wave object with options to display the mean spectrum and adjust the noise floor. The user can save the spectrogram as a PNG image.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return A Shiny app for visualizing and saving spectrograms of audio wave objects.
 #' @import shiny
 #' @import ggplot2
@@ -19,7 +21,7 @@
 #'   spectrogram_app()
 #' }
 #' }
-spectrogram_app <- function() {
+spectrogram_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -33,32 +35,43 @@ spectrogram_app <- function() {
           tags$style(
             HTML(
               "
-             /* General body styling */
-    body {
-      background-color: #252626;
-      color: #ffffff;
-      margin: 5px;
-    }
+              /* General body styling */
+              body {
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
+              }
 
-    /* Styling for the inputs */
-    .form-control {
-      background-color: #495057;
-      border: 1px solid #6c757d;
-      color: #ffffff;
-    }
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
 
-    .btn-info {
-      background-color: #252626 !important;
-      border-color: #252626 !important;
-      color: #ffffff;
-    }
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
 
-    /* Styling for buttons */
-    .btn {
-      background-color: #343a40;
-      border-color: #6c757d;
-      color: #ffffff;
-    }
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+              /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+              .input-with-info label {
+                margin-right: 5px;
+              }
+
 
               .btn-group-vertical > .btn {
                 margin-bottom: 5px; /* Space between vertical buttons */
@@ -82,6 +95,36 @@ spectrogram_app <- function() {
               padding: 5px 10px; /* Optional: Adjust padding */
               border-radius: 5px; /* Optional: Rounded corners */
               }
+                                /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
+
               "
             )
           )
@@ -93,14 +136,14 @@ spectrogram_app <- function() {
           column(1,verticalLayout(
             checkboxInput("meanspec", "Mean Spectrum", value = FALSE),
             conditionalPanel(
-              condition = "input.meanspec",
-              selectInput("meanspecScale", "Scale:", selected = "Linear",
-                          choices = c("Linear", "dB"))
+              condition = "input.meanspec == true",
+              selectInput("meanspecScale", "Scale:", selected = "linear",
+                          choices = c("linear", "dB"))
             )
           )
           ),
           column(1,
-                 numericInput("noise.floor", "Floor (dB)",
+                 numericInput("noise.floor", "Cutoff (dB)",
                               value = -50, min = -80, max = -20, step = 5)
                  ),
           column(1,
@@ -157,10 +200,17 @@ spectrogram_app <- function() {
 
       output$specPlot <- renderPlot({
         tryCatch({
+
+          if (isolate(input$meanspec)) {
+            req(input$meanspecScale)  # Ensure meanspecScale is available
+            scale_type <- isolate(as.character(input$meanspecScale))
+          } else {
+            scale_type <- NULL
+          }
           combined_plot <- spectrogram_ggplot(wave,
                                               meanspec = isolate(input$meanspec),
-                                              floor = isolate(input$noise.floor),
-                                              scale = isolate(input$meanspecScale),
+                                              cutoff = isolate(input$noise.floor),
+                                              scale.type = scale_type,
                                               overlap = isolate(input$overlap))
           print(combined_plot)
           savedPlot(combined_plot)  # Save the plot reactively
@@ -212,5 +262,14 @@ spectrogram_app <- function() {
 
   }
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }

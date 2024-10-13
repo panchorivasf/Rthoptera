@@ -1,6 +1,8 @@
 #' Oscillogram with ggplot2
 #'
-#' @param wave a Wave object
+#' @param wave A Wave object
+#' @param y.title Character. A title for the Y-axis.
+#' @param x.title Character. A title for the X-axis.
 #'
 #' @return An oscillogram plot.
 #' @export
@@ -9,7 +11,9 @@
 #' \dontrun{
 #' oscillgoram_ggplot(coryphoda)
 #' }
-oscillogram_ggplot <- function(wave, y.title = "Relative Amplitude", x.title = ""){
+oscillogram_ggplot <- function(wave,
+                               y.title = "Relative Amplitude",
+                               x.title = ""){
 
   oscillo_df <- oscillo_df(wave)
 

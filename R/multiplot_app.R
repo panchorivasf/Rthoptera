@@ -1,6 +1,8 @@
 #' Multiplot (Spectrogram, Oscillogram, and Mean Power Spectrum) Shiny App
 #'
-#' This Shiny app allows users to visualize a combined plot of a spectrogram, mean spectrum, and oscillogram for a selected audio file (Wave object). Users can adjust settings such as noise floor, image dimensions, and background transparency, and can download the resulting plot as a PNG file.
+#' This Shiny app allows users to visualize a combined plot of a spectrogram, mean spectrum, and oscillogram for a selected audio file (Wave object). Users can adjust settings such as noise cutoff, image dimensions, and background transparency, and can download the resulting plot as a PNG file.
+#'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #'
 #' @return A Shiny app for visualizing, customizing, and downloading spectrogram and oscillogram plots.
 #' @import shiny
@@ -19,7 +21,7 @@
 #'   multiplot_app()
 #' }
 #' }
-multiplot_app <- function() {
+multiplot_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -34,32 +36,44 @@ multiplot_app <- function() {
           tags$style(
             HTML(
               "
-    /* General body styling */
-    body {
-      background-color: #252626;
-      color: #ffffff;
-      margin: 5px;
-    }
+              /* General body styling */
+              body {
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
+              }
 
-    /* Styling for the inputs */
-    .form-control {
-      background-color: #495057;
-      border: 1px solid #6c757d;
-      color: #ffffff;
-    }
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
 
-    .btn-info {
-      background-color: #252626 !important;
-      border-color: #252626 !important;
-      color: #ffffff;
-    }
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
 
-    /* Styling for buttons */
-    .btn {
-      background-color: #343a40;
-      border-color: #6c757d;
-      color: #ffffff;
-    }
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+              /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+              .input-with-info label {
+                margin-right: 5px;
+              }
+
+
 
     #multiplot {
       border: 2px solid forestgreen; /* Blue contour */
@@ -77,21 +91,36 @@ multiplot_app <- function() {
       border-radius: 5px; /* Optional: Rounded corners */
     }
 
-    .modal-content {
-      background-color: #252626;
-      color: #ffffff;
-    }
 
-    .modal-header, .modal-footer {
-      background-color: #343a40;
-      color: #ffffff;
-      border-bottom: 1px solid #6c757d;
-    }
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
 
-    .modal-body {
-      background-color: #252626;
-      color: #ffffff;
-    }
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
 
     #specPlot {
       height: calc(100vh - 120px); /* Adjusts height taking into account other elements */
@@ -126,11 +155,11 @@ multiplot_app <- function() {
                              choices = NULL, width = '100%')
           ),
           column(1,
-                 selectInput("meanspecScale", "Scale:", selected = "Linear",
-                             choices = c("Linear", "dB"))
+                 selectInput("meanspecScale", "Scale:", selected = "dB",
+                             choices = c("linear", "dB"))
                  ),
           column(1,
-                 numericInput("noise.floor", "Floor (dB)",
+                 numericInput("noise.cutoff", "Cutoff (dB)",
                               value = -35, min = -60, max = -20, step = 5)),
           column(1,
                  numericInput("osc.height", "Oscillogram Height (%)",
@@ -175,21 +204,36 @@ multiplot_app <- function() {
       value2 <- (input$osc.height / 100) * 10
       value1 <- 10 - value2
 
-      c(as.numeric(value1), as.numeric(value2))
+      c(value1, value2)
     })
 
     observeEvent(input$multiplot, {
       req(input$waveObject)
-      req(input$noise.floor)
+      req(input$noise.cutoff)
 
-      wave <- get(input$waveObject, envir = .GlobalEnv)
+      # wave <- get(input$waveObject, envir = .GlobalEnv)
+
+      # Safely get the wave object
+      wave <- tryCatch({
+        get(input$waveObject, envir = .GlobalEnv)
+      }, error = function(e) {
+        showModal(modalDialog(
+          title = "Error",
+          paste("Could not find the selected wave object:", e$message),
+          easyClose = TRUE,
+          footer = modalButton("OK")
+        ))
+        return(NULL)
+      })
 
       plotParams <- list(
         wave = wave,
-        floor = isolate(input$noise.floor),
-        scale = isolate(input$meanspecScale),
+        cutoff = isolate(input$noise.cutoff),
+        scale.type = isolate(input$meanspecScale),
         heights = heights()
       )
+
+      # print(plotParams)
 
       spectrogramCache(plotParams)
       plotVisible(TRUE)
@@ -203,9 +247,9 @@ multiplot_app <- function() {
           plotParams <- spectrogramCache()
 
           combined_plot <- multiplot_ggplot(
-            plotParams$wave,
-            floor = plotParams$floor,
-            scale = plotParams$scale,
+            wave = plotParams$wave,
+            cutoff = plotParams$cutoff,
+            scale.type = plotParams$scale.type,
             heights = plotParams$heights
           )
           print(combined_plot)
@@ -238,8 +282,8 @@ multiplot_app <- function() {
           filename,
           plot = multiplot_ggplot(
             plotParams$wave,
-            plotParams$floor,
-            plotParams$scale,
+            plotParams$cutoff,
+            plotParams$scale.type,
             plotParams$heights
           ),
           width = input$imgWidth, height = input$imgHeight,
@@ -262,6 +306,16 @@ multiplot_app <- function() {
 
   }
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }
 

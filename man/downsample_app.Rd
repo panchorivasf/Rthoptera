@@ -4,9 +4,11 @@
 \alias{downsample_app}
 \title{Downsample Audio Shiny App}
 \usage{
-downsample_app()
+downsample_app(launch.browser = FALSE)
 }
 \arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
+
 \item{input}{Internal Shiny parameter for handling input values.}
 
 \item{output}{Internal Shiny parameter for rendering outputs in the app.}

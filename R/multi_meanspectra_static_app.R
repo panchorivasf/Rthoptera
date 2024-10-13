@@ -1,6 +1,9 @@
-#' Multi-Power Spectra Shiny App
+#' Multi-Power Spectra Static Shiny App
 #'
-#' This Shiny app allows users to visualize and interact with the oscillogram and power spectra of selected wave objects. Users can add multiple selections on the oscillogram and visualize the corresponding mean power spectra. The app provides options to download individual or combined visualizations.
+#' This Shiny app allows users to create multiple power spectra from selections in the oscillogram.
+#' The app provides options to download individual or combined visualizations.
+#'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #'
 #' @return A Shiny app for visualizing wave oscillograms and mean spectra.
 #' @import shiny
@@ -20,7 +23,7 @@
 #' }
 #' }
 
-multi_meanspectra_static_app <- function(){
+multi_meanspectra_static_app <- function(launch.browser = FALSE){
 
   ui <- function(request) {
     tagList(
@@ -28,10 +31,77 @@ multi_meanspectra_static_app <- function(){
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        theme = bslib::bs_theme(bootswatch = "darkly"),
+        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
+              /* General body styling */
+              body {
+                background-color: #252626;
+                color: #ffffff;
+                margin: 5px;
+              }
+
+              /* Styling for the inputs */
+              .form-control {
+                background-color: #495057;
+                border: 1px solid #6c757d;
+                color: #ffffff;
+              }
+
+              .btn-info {
+                background-color: #252626 !important;
+                border-color: #252626 !important;
+                color: #ffffff;
+              }
+
+              /* Styling for buttons */
+              .btn {
+                background-color: #343a40;
+                border-color: #6c757d;
+                color: #ffffff;
+              }
+
+                   /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+                 .input-with-info label {
+                margin-right: 5px;
+                 }
+
+
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
         #audioPlot {
           height: calc(100vh - 120px); /* Adjusts height taking into account other elements */
           width: 100%;
@@ -294,5 +364,14 @@ multi_meanspectra_static_app <- function(){
     stopApp()
   })
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }

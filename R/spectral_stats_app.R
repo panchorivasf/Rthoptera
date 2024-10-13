@@ -2,6 +2,8 @@
 #'
 #' This Shiny app allows users to analyze spectral statistics of audio data from wave objects. Users can select a wave object, input additional metadata (such as Specimen ID and sound type), and configure parameters for spectral analysis, including amplitude threshold and bandwidth. The app generates a Plotly plot of the spectrum, showing key spectral features such as peak frequency, bandwidth, and -20 dB threshold. Users can download the results in HTML or CSV format and save the data frame to the R environment.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return A Shiny app for analyzing and visualizing spectral statistics of audio wave objects.
 #' @import shiny
 #' @import shinyBS
@@ -21,7 +23,7 @@
 #'   spec_stats_app()
 #' }
 #' }
-spectral_stats_app <- function() {
+spectral_stats_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -66,19 +68,35 @@ spectral_stats_app <- function() {
                 color: #ffffff;
               }
 
-    .modal-content {
-      background-color: #252626;
-      color: #ffffff;
-    }
-    .modal-header, .modal-footer {
-      background-color: #343a40;
-      color: #ffffff;
-      border-bottom: 1px solid #6c757d;
-    }
-    .modal-body {
-      background-color: #252626;
-      color: #ffffff;
-    }
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
 
 
               #run{
@@ -685,7 +703,16 @@ spectral_stats_app <- function() {
 
   }
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }
 
 

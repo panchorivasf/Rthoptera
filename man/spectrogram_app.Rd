@@ -4,7 +4,10 @@
 \alias{spectrogram_app}
 \title{Spectrogram Shiny App}
 \usage{
-spectrogram_app()
+spectrogram_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app for visualizing and saving spectrograms of audio wave objects.

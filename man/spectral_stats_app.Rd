@@ -4,7 +4,10 @@
 \alias{spectral_stats_app}
 \title{Spectral Statistics Shiny App}
 \usage{
-spectral_stats_app()
+spectral_stats_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app for analyzing and visualizing spectral statistics of audio wave objects.

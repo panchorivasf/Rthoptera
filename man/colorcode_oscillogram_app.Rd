@@ -4,7 +4,10 @@
 \alias{colorcode_oscillogram_app}
 \title{Color-Coded Oscillogram Shiny App}
 \usage{
-colorcode_oscillogram_app()
+colorcode_oscillogram_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app for visualizing, customizing, and downloading color-coded oscillograms.

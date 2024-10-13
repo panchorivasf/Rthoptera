@@ -2,6 +2,8 @@
 #'
 #' This Shiny app performs low-quality temporal statistics analysis on wave objects. It allows the user to configure parameters such as smoothing window, peak finder thresholds, and gap limits for trains and peaks. The app generates interactive plots and data tables summarizing motifs, trains, and peaks, along with parameter settings.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return A Shiny app for analyzing temporal statistics of acoustic waveforms.
 #' @import shiny
 #' @import shinyBS
@@ -22,7 +24,7 @@
 #'   temp_stats_lq_app()
 #' }
 #' }
-temporal_stats_lq_app <- function() {
+temporal_stats_lq_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -63,19 +65,46 @@ temporal_stats_lq_app <- function() {
                 color: #ffffff;
               }
 
-    .modal-content {
-      background-color: #252626;
-      color: #ffffff;
-    }
-    .modal-header, .modal-footer {
-      background-color: #343a40;
-      color: #ffffff;
-      border-bottom: 1px solid #6c757d;
-    }
-    .modal-body {
-      background-color: #252626;
-      color: #ffffff;
-    }
+              /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+              .input-with-info label {
+                margin-right: 5px;
+              }
+
+
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
 
 
               #run {
@@ -883,8 +912,16 @@ temporal_stats_lq_app <- function() {
 
   }
 
+  if(launch.browser){
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }
 
 

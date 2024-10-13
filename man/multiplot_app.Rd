@@ -4,13 +4,16 @@
 \alias{multiplot_app}
 \title{Multiplot (Spectrogram, Oscillogram, and Mean Power Spectrum) Shiny App}
 \usage{
-multiplot_app()
+multiplot_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app for visualizing, customizing, and downloading spectrogram and oscillogram plots.
 }
 \description{
-This Shiny app allows users to visualize a combined plot of a spectrogram, mean spectrum, and oscillogram for a selected audio file (Wave object). Users can adjust settings such as noise floor, image dimensions, and background transparency, and can download the resulting plot as a PNG file.
+This Shiny app allows users to visualize a combined plot of a spectrogram, mean spectrum, and oscillogram for a selected audio file (Wave object). Users can adjust settings such as noise cutoff, image dimensions, and background transparency, and can download the resulting plot as a PNG file.
 }
 \examples{
 \dontrun{

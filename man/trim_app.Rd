@@ -4,7 +4,10 @@
 \alias{trim_app}
 \title{Select parts of a wave, and save them in the R environment}
 \usage{
-trim_app()
+trim_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 One or more Wave objects created from selected parts of the original wave object.

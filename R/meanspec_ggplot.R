@@ -1,7 +1,7 @@
 #' Plot a Mean Power Spectrum using ggplot2
 #'
 #' @param wave A Wave object.
-#' @param scale Scale for the amplitude. Either "dB" (Full Scale) or "Linear".
+#' @param scale.type Scale for the amplitude. Either "dB" (Full Scale) or "Linear".
 #' @param wl Window length (samples).
 #'
 #' @return A plot.
@@ -10,10 +10,11 @@
 #'
 #' @examples
 #' \dontrun{
+#' data(coryphoda)
 #' meanspec_ggplot(coryphoda)
 #' }
 meanspec_ggplot <- function(wave,
-                            scale = "dB",
+                            scale.type = "dB",
                             auto.wl = TRUE,
                             wl = NULL,
                             overlap = 95){
@@ -28,7 +29,7 @@ meanspec_ggplot <- function(wave,
     wl <- wl + 1
   }
 
-  dB_value <- if (scale == "dB") "max0" else NULL
+  dB_value <- if (scale.type == "dB") "max0" else NULL
   mean_spectrum <- seewave::meanspec(wave,
                                      f = wave@samp.rate,
                                      wl = wl,
@@ -45,7 +46,7 @@ meanspec_ggplot <- function(wave,
     ggplot(aes(x = freq, y = mean_amp)) +
     theme_minimal(base_size = 15)
 
-  if(scale == "dB"){
+  if(scale.type == "dB"){
     spectrum_plot <- spectrum_plot +
       geom_ribbon(aes(x = freq, ymin = -50, ymax = mean_amp), fill = "black") +
       scale_y_continuous(breaks = c(-40, -20, 0),
@@ -63,9 +64,9 @@ meanspec_ggplot <- function(wave,
                                                      as.character(x)))
   }
 
-  if(scale == "dB"){
+  if(scale.type == "dB"){
     title <- "dB"
-  }else if(scale == "linear"){
+  }else if(scale.type == "linear"){
     title <- "Amplitude"
   }
   spectrum_plot <- spectrum_plot +

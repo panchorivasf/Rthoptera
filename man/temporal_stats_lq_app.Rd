@@ -4,7 +4,10 @@
 \alias{temporal_stats_lq_app}
 \title{Temporal Statistics Low-Quality Shiny App}
 \usage{
-temporal_stats_lq_app()
+temporal_stats_lq_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app for analyzing temporal statistics of acoustic waveforms.

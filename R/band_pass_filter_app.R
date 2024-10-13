@@ -2,6 +2,7 @@
 #'
 #' This function launches a Shiny app that allows users to visualize either the mean spectrum or the spectrogram before applying a frequency filter to a Wave object.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #' @return A Shiny app interface for applying a frequency filter.
 #' @export
 #'
@@ -24,7 +25,7 @@
 #' @importFrom shinycssloaders withSpinner
 
 
-band_pass_filter_app <- function() {
+band_pass_filter_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -75,19 +76,35 @@ band_pass_filter_app <- function() {
                 margin-right: 5px;
                  }
 
-                  .modal-content {
-      background-color: #252626;
-      color: #ffffff;
-    }
-    .modal-header, .modal-footer {
-      background-color: #343a40;
-      color: #ffffff;
-      border-bottom: 1px solid #6c757d;
-    }
-    .modal-body {
-      background-color: #252626;
-      color: #ffffff;
-    }
+               /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
 
                 #audioPlot {
                 height: calc(100vh - 120px); /* Adjusts height taking into account other elements */
@@ -289,6 +306,14 @@ band_pass_filter_app <- function() {
   }
 
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
 
 }

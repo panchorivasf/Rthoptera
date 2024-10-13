@@ -7,32 +7,56 @@
 spectrogram_ggplot(
   wave,
   meanspec = TRUE,
-  floor = -35,
-  scale = "dB",
+  widths = c(10, 1),
+  cutoff = -35,
+  scale.type = "dB",
   overlap = 95,
-  zeropad = 200
+  zeropad = 200,
+  margin.l = 10,
+  margin.r = 0,
+  margin.t = 0,
+  margin.b = 10,
+  show.axis.titles = TRUE
 )
 }
 \arguments{
-\item{wave}{A wave object.}
+\item{wave}{A `Wave` object from the `tuneR` package, representing the audio signal to be analyzed.}
 
-\item{meanspec}{Logical. If TRUE, a flipped mean power spectrum is added on the right side of the spectrogram.}
+\item{meanspec}{Logical. If `TRUE`, a mean power spectrum is plotted alongside the spectrogram. The spectrum is flipped and positioned to the right.}
 
-\item{floor}{Noise floor in dBFS.}
+\item{widths}{A numeric vector of length 2 specifying the relative widths of the spectrogram and the mean power spectrum when `meanspec = TRUE`. Defaults to `c(10, 1)`.}
 
-\item{scale}{Scale for the amplitude. Either "dB" or "Linear".}
+\item{cutoff}{Numeric. The amplitude cutoff in dB relative to the peak amplitude. Any amplitude below this cutoff will not be visible in the spectrogram. Defaults to `-35`.}
 
-\item{overlap}{Window overlap (%).}
+\item{scale.type}{Character. The scale used for the amplitude. Either `"dB"` for decibel scaling or `"Linear"` for a linear amplitude scale. Defaults to `"dB"`.}
 
-\item{zeropad}{Zero padding.}
+\item{overlap}{Numeric. The percentage of overlap between successive windows for spectrogram calculation. Defaults to `95`.}
+
+\item{zeropad}{Numeric. The number of zero-padding points to add to each window to increase frequency resolution. Defaults to `200`.}
+
+\item{margin.l}{Numeric. The left margin (in points) around the plot. Defaults to `10`.}
+
+\item{margin.r}{Numeric. The right margin (in points) around the plot. Defaults to `0`.}
+
+\item{margin.t}{Numeric. The top margin (in points) around the plot. Defaults to `0`.}
+
+\item{margin.b}{Numeric. The bottom margin (in points) around the plot. Defaults to `10`.}
+
+\item{show.axis.titles}{Logical. If `TRUE`, axis titles for time and frequency will be displayed on the spectrogram. Defaults to `TRUE`.}
 }
 \value{
-A spectrogram plot with automatic window length and optionally a mean power spectrum.
+A `ggplot2` object representing the spectrogram, with the option to include a mean power spectrum on the right side.
 }
 \description{
 Standardized Spectrogram plus Mean Power Spectrum
 }
 \examples{
 \dontrun{
-spectrogram_ggplot()}
+data(coryphoda)
+# Create a spectrogram with a mean power spectrum for a wave object:
+spectrogram_ggplot(coryphoda, meanspec = TRUE, cutoff = -40, scale.type = "dB")
+
+# Create a spectrogram without the mean power spectrum:
+spectrogram_ggplot(coryphoda, meanspec = FALSE)
+}
 }

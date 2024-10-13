@@ -2,6 +2,8 @@
 #'
 #' This Shiny app allows users to visualize the mean spectra of multiple selections from an audio waveform. Users can interactively select regions of a waveform, generate their respective mean spectra, and overlay these spectra using a colorblind-safe palette. The app also provides functionality to download the oscillogram and mean spectra as image files.
 #'
+#'@param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return A Shiny app for visualizing and downloading multi-selection mean spectra and oscillograms.
 #' @import shiny
 #' @import ggplot2
@@ -20,7 +22,7 @@
 #'   multi_meanspectra_app()
 #' }
 #' }
-multi_meanspectra_app <- function() {
+multi_meanspectra_app <- function(launch.browser = FALSE) {
 
   # Javascript code to customize the "close" button
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
@@ -49,7 +51,7 @@ multi_meanspectra_app <- function() {
                 color: #ffffff;
               }
 
-                     .btn-info {
+               .btn-info {
                 background-color: #252626 !important;
                 border-color: #252626 !important;
                 color: #ffffff;
@@ -71,6 +73,37 @@ multi_meanspectra_app <- function() {
               .shiny-input-container {
                 margin-right: 10px; /* Increases horizontal space between inputs */
               }
+
+
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
 
 
               #plot_button {
@@ -434,6 +467,14 @@ multi_meanspectra_app <- function() {
 
   }
 
+  if(launch.browser){
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }

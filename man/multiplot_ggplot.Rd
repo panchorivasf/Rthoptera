@@ -6,23 +6,28 @@
 \usage{
 multiplot_ggplot(
   wave,
-  floor = -35,
+  cutoff = -35,
   overlap = 95,
   zeropad = 200,
-  scale = "dB",
-  heights = c(8, 2)
+  scale.type = "dB",
+  heights = c(7, 3),
+  oscillo.label = ""
 )
 }
 \arguments{
-\item{wave}{A `Wave` object.}
+\item{wave}{A `Wave` object. The sound data to be plotted.}
 
-\item{floor}{The noise floor in dBFS.}
+\item{cutoff}{Numeric. Amplitude cutoff in dB below the peak. Values below the cutoff will not be visible in the spectrogram. Default is -35 dB.}
 
-\item{overlap}{Window overlap (%).}
+\item{overlap}{Numeric. Window overlap percentage for the spectrogram. Default is 95.}
 
-\item{zeropad}{Zero padding.}
+\item{zeropad}{Numeric. Zero padding for FFT in the spectrogram. Default is 200.}
 
-\item{scale}{Scale for the amplitude. Either "dB" or "Linear".}
+\item{scale.type}{Character. Scale for the amplitude in the spectrogram, either "dB" or "Linear". Default is "dB".}
+
+\item{heights}{Numeric vector. The relative heights of the spectrogram/mean spectrum plot and the oscillogram. Default is `c(7,3)`.}
+
+\item{oscillo.label}{Character. A title for the Y-axis of the oscillogram. Default is an empty string.}
 }
 \value{
 A plot with aligned spectrogram, mean spectrum, and oscillogram.
@@ -32,6 +37,7 @@ Multiplot including Spectrogram, Mean Power Spectrum, and
 }
 \examples{
 \dontrun{
+data(coryphoda)
 multiplot_ggplot(coryphoda)
 }
 }

@@ -4,7 +4,10 @@
 \alias{spectrum_plot_app}
 \title{Spectrum Plot Shiny App}
 \usage{
-spectrum_plot_app()
+spectrum_plot_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app that generates and visualizes the spectrum plot of an audio wave object.

@@ -7,7 +7,11 @@
 oscillogram_ggplot(wave, y.title = "Relative Amplitude", x.title = "")
 }
 \arguments{
-\item{wave}{a Wave object}
+\item{wave}{A Wave object}
+
+\item{y.title}{Character. A title for the Y-axis.}
+
+\item{x.title}{Character. A title for the X-axis.}
 }
 \value{
 An oscillogram plot.

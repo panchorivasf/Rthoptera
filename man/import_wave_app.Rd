@@ -4,7 +4,10 @@
 \alias{import_wave_app}
 \title{Interactive Audio Import Shiny App}
 \usage{
-import_wave_app()
+import_wave_app(launch.browser = FALSE)
+}
+\arguments{
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 This function launches a Shiny app for importing audio files. The processed wave object is saved to the global environment with the name provided by the user.

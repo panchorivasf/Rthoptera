@@ -5,7 +5,7 @@
 #' with automatic window length based on sampling rate and duration.
 #'
 #' @param wave A Wave object
-#' @param floor Noise floor in dBFS.
+#' @param cutoff Amplitude cutoff in dB below the peak. Values below the cutoff will not be visible in the spectrogram.
 #' @param overlap Window overlap (%).
 #' @param zeropad Zero padding.
 #'
@@ -17,9 +17,8 @@
 #' \dontrun{
 #' spectro_df(coryphoda)
 #' }
-spectro_df <- function(wave, floor = -35, overlap = 95, zeropad = 200){
+spectro_df <- function(wave, cutoff = -35, overlap = 95, zeropad = 200){
 
-  dyn <- as.numeric(floor)
 
   wl = round(wave@samp.rate * sqrt(seewave::duration(wave))*20e-4)
 
@@ -27,7 +26,7 @@ spectro_df <- function(wave, floor = -35, overlap = 95, zeropad = 200){
     wl <- wl + 1
   }
 
-  spect <- wave |>
+  spect <- wave %>%
     seewave::spectro(
       wl = wl,
       ovlp = overlap,
@@ -39,26 +38,13 @@ spectro_df <- function(wave, floor = -35, overlap = 95, zeropad = 200){
   colnames(spect$amp) <- spect$time
   rownames(spect$amp) <- spect$freq
 
-  spect_df <- spect$amp |>
-    as_tibble(rownames = "freq") |>
-    pivot_longer(
-      -freq,
-      names_to = "time",
-      values_to = "amp"
-    ) |>
-    mutate(
-      freq = as.numeric(freq),
-      time = as.numeric(time),
-      dyn = dyn
-    )
+  spect_df <- spect$amp |> as_tibble(rownames = "freq") |>
+    pivot_longer(-freq, names_to = "time", values_to = "amp") |>
+    mutate(freq = as.numeric(freq), time = as.numeric(time))
 
-  spect_df_floor <- spect_df |>
-    mutate(
-      amp_floor = case_when(
-        amp < dyn ~ dyn,
-        TRUE ~ amp
-      )
-    )
+  dyn <- as.numeric(cutoff)
+  spect_df_cutoff <- spect_df |> mutate(amp_cutoff = ifelse(amp < dyn, dyn, amp))
 
-  return(spect_df_floor)
+
+  return(spect_df_cutoff)
 }

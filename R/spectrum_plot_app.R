@@ -2,6 +2,8 @@
 #'
 #' This Shiny app allows users to visualize a spectrum plot for a selected audio wave object. It includes customizable options such as window length, overlap, window function, and amplitude scale (linear, dB, dBFS). Users can also adjust the axis positions, choose the number of frequency ticks, and add plot parameters or summary statistics to the plot.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return A Shiny app that generates and visualizes the spectrum plot of an audio wave object.
 #' @import shiny
 #' @import ggplot2
@@ -21,7 +23,7 @@
 #'   spectrum_plot_app()
 #' }
 #' }
-spectrum_plot_app <- function() {
+spectrum_plot_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -36,7 +38,7 @@ spectrum_plot_app <- function() {
           tags$style(
             HTML(
               "
-                      /* General body styling */
+              /* General body styling */
               body {
                 background-color: #252626;
                 color: #ffffff;
@@ -63,19 +65,46 @@ spectrum_plot_app <- function() {
                 color: #ffffff;
               }
 
-    .modal-content {
-      background-color: #252626;
-      color: #ffffff;
-    }
-    .modal-header, .modal-footer {
-      background-color: #343a40;
-      color: #ffffff;
-      border-bottom: 1px solid #6c757d;
-    }
-    .modal-body {
-      background-color: #252626;
-      color: #ffffff;
-    }
+              /* Input with info button styling */
+              .input-with-info {
+                display: flex;
+                align-items: center;
+              }
+
+              .input-with-info label {
+                margin-right: 5px;
+              }
+
+
+              /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
               #specPlot {
                 height: calc(100vh - 120px);
                 width: 100%;
@@ -425,7 +454,16 @@ spectrum_plot_app <- function() {
 
   }
 
-  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }
 
 

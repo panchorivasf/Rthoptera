@@ -4,10 +4,10 @@
 \alias{multioscillo_app}
 \title{Multi-Oscillogram Shiny App}
 \usage{
-multioscillo_app()
+multioscillo_app(launch.browser = FALSE)
 }
 \arguments{
-\item{dark.mode}{Logical, indicating whether the app should use a dark mode theme (default is TRUE).}
+\item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
 }
 \value{
 A Shiny app interface for plotting and saving multi-oscillograms of selected wave objects.

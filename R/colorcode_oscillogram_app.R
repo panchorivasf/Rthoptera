@@ -2,6 +2,8 @@
 #'
 #' This Shiny app allows users to visualize an oscillogram and paint selected sections with different colors using a color-blind-safe palette. The user can also customize the display options such as adding a scale bar, showing axes, and downloading the plot as a PNG file.
 #'
+#' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
+#'
 #' @return A Shiny app for visualizing, customizing, and downloading color-coded oscillograms.
 #' @import shiny
 #' @import ggplot2
@@ -17,7 +19,7 @@
 #' if (interactive()) {
 #'   colorcode_oscillogram_app()
 #' }
-colorcode_oscillogram_app <- function() {
+colorcode_oscillogram_app <- function(launch.browser = FALSE) {
 
   jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
@@ -39,13 +41,50 @@ colorcode_oscillogram_app <- function() {
     fluidPage(
       useShinyjs(),
       extendShinyjs(text = jscode, functions = c("closeWindow")),
-      theme = bslib::bs_theme(bootswatch = "darkly"),
+      # theme = bslib::bs_theme(bootswatch = "darkly"),
       tags$head(tags$style(
         HTML(
           "
-          body {
-            margin: 20px; /* Adds margin around the entire page */
-          }
+          /* General body styling */
+  body {
+    background-color: #252626;
+      color: #ffffff;
+      margin: 5px;
+  }
+
+/* Styling for the inputs */
+  .form-control {
+    background-color: #495057;
+      border: 1px solid #6c757d;
+    color: #ffffff;
+  }
+
+.btn-info {
+  background-color: #252626 !important;
+    border-color: #252626 !important;
+    color: #ffffff;
+}
+
+/* Styling for buttons */
+  .btn {
+    background-color: #343a40;
+      border-color: #6c757d;
+      color: #ffffff;
+  }
+
+/* Input with info button styling */
+  .input-with-info {
+    display: flex;
+    align-items: center;
+  }
+
+.input-with-info label {
+  margin-right: 5px;
+}
+
+
+
+
           #audioPlot {
             height: calc(100vh - 120px); /* Adjusts height taking into account other elements */
             width: 100%;
@@ -69,6 +108,36 @@ colorcode_oscillogram_app <- function() {
           .slider-container .shiny-input-container {
             width: 100% !important; /* Ensure slider takes full width */
           }
+
+                        /* Styling for dialog boxes */
+              .modal-dialog {
+                border-radius: 10px !important; /* This applies rounding to the outer modal container */
+              }
+
+              .modal-content {
+                background-color: #252626;
+                color: #ffffff;
+                border-radius: 15px !important; /* Rounded content container */
+                overflow: hidden; /* Ensure content follows the rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,.5); /* Optional: add a shadow */
+              }
+              .modal-header, .modal-footer {
+                background-color: #343a40;
+                color: #ffffff;
+                border-top: none;
+                border-bottom: none;
+                border-radius: 15px 15px 0 0 !important;
+              }
+
+              .modal-footer {
+                border-radius: 0 0 15px 15px !important; /* Round bottom corners */
+              }
+
+              .modal-body {
+                 background-color: #252626;
+                 color: #ffffff;
+              }
+
 
            #plot_button {
                border: 2px solid forestgreen; /* Blue contour */
@@ -294,5 +363,14 @@ colorcode_oscillogram_app <- function() {
   }
 
 
-  shinyApp(ui = ui, server = server)
+  if(launch.browser){
+
+    shinyApp(ui = ui, server = server, options = list(launch.browser = browser))
+
+  } else {
+
+    shinyApp(ui = ui, server = server)
+
+  }
+
 }
