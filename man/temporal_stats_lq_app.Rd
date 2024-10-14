@@ -2,7 +2,7 @@
 % Please edit documentation in R/temporal_stats_lq_app.R
 \name{temporal_stats_lq_app}
 \alias{temporal_stats_lq_app}
-\title{Temporal Statistics Low-Quality Shiny App}
+\title{Temporal Statistics LQ Shiny App}
 \usage{
 temporal_stats_lq_app(launch.browser = FALSE)
 }
@@ -13,12 +13,21 @@ temporal_stats_lq_app(launch.browser = FALSE)
 A Shiny app for analyzing temporal statistics of acoustic waveforms.
 }
 \description{
-This Shiny app performs low-quality temporal statistics analysis on wave objects. It allows the user to configure parameters such as smoothing window, peak finder thresholds, and gap limits for trains and peaks. The app generates interactive plots and data tables summarizing motifs, trains, and peaks, along with parameter settings.
+This Shiny app performs temporal statistics analysis on Wave objects
+containing 'LQ' signals (broadband). It allows the user to configure
+parameters such as smoothing window, peak finder thresholds,
+and gap limits for trains and peaks. The app generates interactive
+plots and data tables summarizing motifs, trains, and peaks, along with
+parameter settings.
+}
+\details{
+New metrics provided by this function include the Temporal Complexity Index (within motif),
+Temporal Excursion (within train), and Dynamic Excursion (within train).
 }
 \examples{
  \dontrun{
 if (interactive()) {
-  temp_stats_lq_app()
+  temporal_stats_lq_app()
 }
 }
 }

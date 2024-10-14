@@ -191,6 +191,8 @@ multiplot_app <- function(launch.browser = FALSE) {
 
   server = function(input, output, session) {
     plotVisible <- reactiveVal(FALSE)
+    savedPlot <- reactiveVal(NULL)
+    savedImage <- reactiveVal(NULL)
     spectrogramCache <- reactiveVal(NULL)
 
     observe({
@@ -235,7 +237,7 @@ multiplot_app <- function(launch.browser = FALSE) {
 
       # print(plotParams)
 
-      spectrogramCache(plotParams)
+      # spectrogramCache(plotParams)
       plotVisible(TRUE)
 
       output$specPlotOutput <- renderUI({
@@ -244,15 +246,35 @@ multiplot_app <- function(launch.browser = FALSE) {
 
       output$specPlot <- renderPlot({
         tryCatch({
-          plotParams <- spectrogramCache()
+          # plotParams <- spectrogramCache()
 
+          # combined_plot <- multiplot_ggplot(
+          #   wave = plotParams$wave,
+          #   cutoff = plotParams$cutoff,
+          #   scale.type = plotParams$scale.type,
+          #   heights = plotParams$heights
+          # )
           combined_plot <- multiplot_ggplot(
-            wave = plotParams$wave,
-            cutoff = plotParams$cutoff,
-            scale.type = plotParams$scale.type,
-            heights = plotParams$heights
+            wave = wave,
+            cutoff = isolate(input$noise.cutoff),
+            scale.type = isolate(input$meanspecScale),
+            heights = heights()
           )
+
+
           print(combined_plot)
+          savedPlot(combined_plot)
+          # Save the rendered image to a temporary file
+          temp_file <- tempfile(fileext = ".png")
+          bg <- ifelse(input$transparentBg, "transparent", "white")
+          ggsave(temp_file,
+                 plot = combined_plot,
+                 width = isolate(input$imgWidth), height = isolate(input$imgHeight),
+                 units = "in", dpi = 300, bg = bg)
+
+          savedImage(temp_file)
+
+
         }, error = function(e) {
           showModal(modalDialog(
             title = "Error",
@@ -272,25 +294,34 @@ multiplot_app <- function(launch.browser = FALSE) {
 
     output$saveImage <- downloadHandler(
       filename = function() {
-        paste("multiplot", "_saved_", Sys.Date(), ".png", sep = "")
+        paste(as.character(input$waveObject), "_multiplot.png", sep = "")
       },
-      content = function(filename) {
-        req(spectrogramCache())
-        plotParams <- spectrogramCache()
-        bg <- ifelse(input$transparentBg, "transparent", "white")
-        ggsave(
-          filename,
-          plot = multiplot_ggplot(
-            plotParams$wave,
-            plotParams$cutoff,
-            plotParams$scale.type,
-            plotParams$heights
-          ),
-          width = input$imgWidth, height = input$imgHeight,
-          units = "in", dpi = 300, bg = bg
-        )
+      content = function(file) {
+        req(savedImage())
+        file.copy(savedImage(), file)
       }
     )
+    # output$saveImage <- downloadHandler(
+    #   filename = function() {
+    #     paste("multiplot", "_saved_", Sys.Date(), ".png", sep = "")
+    #   },
+    #   content = function(filename) {
+    #     req(spectrogramCache())
+    #     plotParams <- spectrogramCache()
+    #     bg <- ifelse(input$transparentBg, "transparent", "white")
+    #     ggsave(
+    #       filename,
+    #       plot = multiplot_ggplot(
+    #         plotParams$wave,
+    #         plotParams$cutoff,
+    #         plotParams$scale.type,
+    #         plotParams$heights
+    #       ),
+    #       width = input$imgWidth, height = input$imgHeight,
+    #       units = "in", dpi = 300, bg = bg
+    #     )
+    #   }
+    # )
 
     # Stop the app when "Close App" is clicked
     observeEvent(input$close, {

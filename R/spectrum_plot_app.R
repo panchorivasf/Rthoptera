@@ -76,6 +76,25 @@ spectrum_plot_app <- function(launch.browser = FALSE) {
               }
 
 
+              /* Sidebar panel background styling */
+              .sidebar {
+                background-color: #343a40; /* Dark gray background */
+                border-color: #343a40; /* Optional: border color to match */
+              }
+
+              /* Adjust font color inside the sidebar */
+              .sidebar .form-control, .sidebar {
+                color: #ffffff;
+                }
+
+                /* Styling for wellPanel (if used inside the sidebar) */
+                .well {
+                 background-color: #343a40;
+                 border: none;
+                 color: #ffffff;
+                 }
+
+
               /* Styling for dialog boxes */
               .modal-dialog {
                 border-radius: 10px !important; /* This applies rounding to the outer modal container */
@@ -134,6 +153,7 @@ spectrum_plot_app <- function(launch.browser = FALSE) {
                 padding: 5px 5px; /* Button (inside) padding */
                 border-radius: 5px; /* Optional: Rounded corners */
               }
+
               "
             )
           )
@@ -336,10 +356,10 @@ spectrum_plot_app <- function(launch.browser = FALSE) {
 
       if (add.params) {
 
-        range <- range(meanspec_data$mean_amp)
-        minamp <- range[1]
-        maxamp <- range[2]
-        diff <- maxamp - minamp
+        # range <- range(meanspec_data$mean_amp)
+        # minamp <- range[1]
+        # maxamp <- range[2]
+        # diff <- maxamp - minamp
 
 
 
@@ -347,10 +367,10 @@ spectrum_plot_app <- function(launch.browser = FALSE) {
                               "\nwin. size: ", wl,
                               "\noverlap:", ovlp, "%",
                               "\nfunction: ", fun,
-                              "\nscale: ", scale,
-                              "\nmin.amp:",round(minamp,2),
-                              "\nmax.amp:",round(maxamp,2),
-                              "\ndyn.range:",round(diff,2)
+                              "\nscale: ", scale
+                              # "\nmin.amp:",round(minamp,2),
+                              # "\nmax.amp:",round(maxamp,2),
+                              # "\ndyn.range:",round(diff,2)
         )
 
         spectrum_plot <- spectrum_plot +
@@ -364,7 +384,7 @@ spectrum_plot_app <- function(launch.browser = FALSE) {
       }
 
 
-      return(list(spectrum_plot))
+      return(spectrum_plot)
     }
 
     observe({
@@ -430,13 +450,24 @@ spectrum_plot_app <- function(launch.browser = FALSE) {
     width = 'auto', height = 'auto'
     )
 
+    # Saving the plot using a temporary file
+    savedImage <- reactiveVal(NULL)
+
+    observeEvent(input$plot, {
+      req(plotData())
+      temp_file <- tempfile(fileext = ".png")
+      ggsave(temp_file, plot = plotData()$plot, width = plotData()$width,
+             height = plotData()$height, dpi = 300, bg = "white")  # Adjust `bg` if needed
+      savedImage(temp_file)  # Store the temp file
+    })
+
     output$downloadPlot <- downloadHandler(
       filename = function() {
         paste(input$waveObject, "_spectral_plot.png", sep = "")
       },
       content = function(file) {
-        ggsave(file, plot = plotData()$plot, width = plotData()$width,
-               height = plotData()$height, dpi = 300)
+        req(savedImage())  # Ensure that the image is generated
+        file.copy(savedImage(), file)  # Copy the temp file to the user's download path
       }
     )
 

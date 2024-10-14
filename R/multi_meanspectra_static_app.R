@@ -14,16 +14,18 @@
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter mutate select row_number pull
 #' @importFrom shinycssloaders withSpinner
-#' @noRd
+#' @export
 #'
 #' @examples
 #' \dontrun{
 #' if (interactive()) {
-#'   multi_meanspectra()
+#'   multi_meanspectra_static_app()
 #' }
 #' }
 
 multi_meanspectra_static_app <- function(launch.browser = FALSE){
+
+  jscode <- "shinyjs.closeWindow = function() { window.close(); }"
 
   ui <- function(request) {
     tagList(
@@ -31,11 +33,11 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
       fluidPage(
         useShinyjs(),
         extendShinyjs(text = jscode, functions = c("closeWindow")),
-        # theme = bslib::bs_theme(bootswatch = "darkly"),
         tags$head(tags$style(
           HTML(
             "
               /* General body styling */
+
               body {
                 background-color: #252626;
                 color: #ffffff;
@@ -49,7 +51,7 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
                 color: #ffffff;
               }
 
-              .btn-info {
+               .btn-info {
                 background-color: #252626 !important;
                 border-color: #252626 !important;
                 color: #ffffff;
@@ -62,15 +64,15 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
                 color: #ffffff;
               }
 
-                   /* Input with info button styling */
-              .input-with-info {
-                display: flex;
-                align-items: center;
+              .btn-group-vertical > .btn {
+                margin-bottom: 10px; /* Adds space between vertical buttons */
               }
-
-                 .input-with-info label {
-                margin-right: 5px;
-                 }
+              .row {
+                margin-bottom: 10px; /* Adds vertical space between rows */
+              }
+              .shiny-input-container {
+                margin-right: 10px !important; /* Increases horizontal space between inputs */
+              }
 
 
               /* Styling for dialog boxes */
@@ -115,60 +117,26 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
         .shiny-input-container {
           margin-right: 2px; /* Reduces horizontal space between inputs */
         }
-        #spinner {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          width: 60px;
-          height: 60px;
-          margin: -30px 0 0 -30px;
-          border: 6px solid #f3f3f3;
-          border-radius: 50%;
-          border-top: 6px solid #3498db;
-          animation: spin 2s linear infinite;
-          display: none; /* Hidden by default */
-        }
-        @-webkit-keyframes spin {
-          0% { -webkit-transform: rotate(0deg); }
-          100% { -webkit-transform: rotate(360deg); }
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
+
+                  #close {
+            border: 2px solid red; /* Red contour */
+            padding: 5px 5px; /* Button (inside) padding */
+            border-radius: 5px; /* Optional: Rounded corners */
+              }
+
         "
           )
         ))),
-      tags$script(
-        HTML(
-          "
-        Shiny.addCustomMessageHandler('toggleSpinner', function(message) {
-          if (message) {
-            document.getElementById('spinner').style.display = 'block';
-          } else {
-            document.getElementById('spinner').style.display = 'none';
-          }
-        });
-        "
-        )
-      ),
-
-      # titlePanel("Wave Oscillogram and Mean Spectrum"),
-
       fluidRow(
-        column(12,
-               div(style = "display: flex; justify-content: space-around; align-items: center;",
-                   selectInput("wave_select", "Select a Wave Object:", choices = NULL, width = '30%'),
-                   numericInput("opacity", "Fill opacity:", value = 0.9, min = 0.1, max = 1),
-                   actionButton("add_selection", "Add Selection", class = "btn-small"),
-                   downloadButton("download_oscillogram", "Download Oscillogram", class = "btn-small"),
-                   downloadButton("download_power_spectra", "Download Power Spectra", class = "btn-small"),
-                   downloadButton("download_together", "Download Together", class = "btn-small")
-               )
-        )
-
+        column(2, selectInput("wave_select", "Select a Wave Object:", choices = NULL)),
+        column(1, numericInput("opacity", "Fill opacity:", value = 0.9, min = 0.1, max = 1)),
+        column(1, selectInput("wl", "Window Length: ", selected = 4096, choices = c(512,1024,2048,4096,8192), width='80%')),
+        column(1, actionButton("add_selection", "Add")),
+        column(2, downloadButton("download_oscillogram", "Download Oscillogram")),
+        column(2, downloadButton("download_power_spectra", "Download Power Spectra")),
+        column(2, downloadButton("download_together", "Download Together")),
+        column(1, actionButton("close", "Close App", class = "btn-danger"))
       ),
-
       fluidRow(
         column(12, plotOutput("oscillogram", height = "180px", width = "1500px",
                               brush = brushOpts(id = "wave_brush", direction = "x")))
@@ -230,8 +198,8 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
       return(full_spec_df)
     }
 
-    plot.meanspec <- function(wave, brush_data = list(), colors = NULL, opacity = 0.8) {
-      full_spec <- extract.meanspec(wave)
+    plot.meanspec <- function(wave, brush_data = list(), colors = NULL, opacity = 0.8, wl = 1024) {
+      full_spec <- extract.meanspec(wave, wl = wl)
 
       p <- ggplot(full_spec, aes(x = frequency, y = amplitude)) +
         geom_line(color = "black", size = 0.8) +
@@ -241,7 +209,7 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
       if (!is.null(colors) && length(brush_data) > 0) {
         for (i in seq_along(brush_data)) {
           range <- brush_data[[i]]
-          spec <- extract.meanspec(wave, from = range[1], to = range[2])
+          spec <- extract.meanspec(wave, from = range[1], to = range[2], wl = as.numeric(input$wl))
           spec$amplitude <- spec$amplitude * max(wave_df(wave) %>% dplyr::filter(time >= range[1] & time <= range[2]) %>% pull(amplitude))
           p <- p + geom_line(data = spec, aes(x = frequency, y = amplitude), color = colors[i], size = 0.5) +
             geom_area(data = spec, aes(x = frequency, y = amplitude), fill = alpha(colors[i], opacity), color = NA)
@@ -285,7 +253,7 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
       wave <- selected_wave()
       brush_data <- brushed_ranges()
       colors <- c("#E69F00", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
-      p <- plot.meanspec(wave, brush_data, colors, opacity = input$opacity)
+      p <- plot.meanspec(wave, brush_data, colors, opacity = input$opacity, wl = as.numeric(input$wl))
       p
     })
 
@@ -323,7 +291,7 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
         wave <- selected_wave()
         brush_data <- brushed_ranges()
         colors <- c("#E69F00", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
-        p <- plot.meanspec(wave, brush_data, colors)
+        p <- plot.meanspec(wave, brush_data, colors, wl = as.numeric(input$wl))
 
         # Save the plot using ggsave
         ggsave(filename = file, plot = p, device = "png", width = 20, height = 8,
@@ -341,7 +309,7 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
         brush_data <- brushed_ranges()
         colors <- c("#E69F00", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
         p1 <- createOscillogram(wave, brush_data, colors)
-        p2 <- plot.meanspec(wave, brush_data, colors)
+        p2 <- plot.meanspec(wave, brush_data, colors, wl = as.numeric(input$wl))
 
         # Combine the plots using patchwork
         combined_plot <- p1 / p2
@@ -351,18 +319,24 @@ multi_meanspectra_static_app <- function(launch.browser = FALSE){
                units = "in", dpi = 300)
       }
     )
+
+    # Stop app when the tab is closed with the "X" button
+    session$onSessionEnded(function() {
+      stopApp()
+    })
+
+    # Stop app when the "Close app" button is used
+    observeEvent(input$close, {
+      shinyjs::runjs("window.close();")
+      stopApp()
+    })
+
+
+
+
   }
 
-  # Stop app when the tab is closed with the "X" button
-  session$onSessionEnded(function() {
-    stopApp()
-  })
 
-  # Stop app when the "Close app" button is used
-  observeEvent(input$close, {
-    shinyjs::runjs("window.close();")
-    stopApp()
-  })
 
   if(launch.browser){
 
