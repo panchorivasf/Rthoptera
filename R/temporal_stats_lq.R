@@ -31,9 +31,16 @@
 #' @examples
 #' \dontrun{
 #' data(coryphoda)
-#' result <- temporal_stats_lq(coryphoda, specimen_id = "CORALB001", ssmooth = 100, peakfinder_ws = 50)
-#' result$plot  # View the interactive plot
-#' result$peak_data  # View peak statistics}
+#' # result <- temporal_stats_lq(coryphoda)
+#' # plot(result$plot)
+#' }
+#'
+#' @importFrom dplyr mutate filter group_by summarize ungroup lead
+#' @importFrom tibble tibble
+#' @importFrom seewave env resamp
+#' @importFrom plotly plot_ly add_lines layout
+#' @importFrom purrr map
+#' @importFrom htmlwidgets onRender
 temporal_stats_lq <- function(wave,
                               specimen_id = "",
                               ssmooth = 100,
