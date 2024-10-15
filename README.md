@@ -51,7 +51,7 @@ To install the Rthoptera package, follow these steps:
 3. Install **Rthoptera** from GitHub:
 
     ```r
-    remotes::install_github("panchorivasf/Rthoptera")
+    remotes::install_github("naturewaves/Rthoptera")
     ```
 
 4. Load the **Rthoptera** package:
