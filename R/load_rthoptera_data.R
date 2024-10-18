@@ -20,4 +20,4 @@ load_rthoptera_data <- function() {
 }
 
 # Example usage:
-load_wave_data()
+load_rthoptera_data()
