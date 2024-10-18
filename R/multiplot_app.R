@@ -7,6 +7,7 @@
 #' @return A Shiny app for visualizing, customizing, and downloading spectrogram and oscillogram plots.
 #' @import shiny
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom seewave spectro oscillo meanspec
 #' @importFrom dplyr mutate

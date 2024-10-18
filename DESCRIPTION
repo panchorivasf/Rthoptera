@@ -2,30 +2,47 @@ Package: Rthoptera
 Type: Package
 Title: Standardized Insect Bioacoustics
 Version: 0.1.0
+Depends: R (>= 3.5.0)
 Authors@R: c(
-            person("Anonymous", "Anonymous", email = "anonymous@gmail.com",
+            person("Anonymous", "Anonymous", email = "frivasfu@purdue.edu",
                     role = c("cre", "aut"), comment = c(ORCID = "0000-0000-0000-0000")),
             person("Anonymous2", "Anonymous2", role = c("aut")))
-Maintainer: Anonymous  <anonymous@gmail.com>
+Maintainer: Anonymous  <frivasfu@purdue.edu>
 Description: The package provides a set of interactive functions (each one is a Shiny App) to analyze insect acoustic signals, including preprocessing (e.g., high-pass filter, remove DC offset, down-sampling, etc.). Analytical functions allow the user to automatically extract relevant acoustic features in both spectral and temporal dimensions. 
 License: CC BY-NC 4.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
+LazyDataCompression: xz
 Imports:
-    shiny (>= 1.0.0),
-    shinyjs,
-    shinyBS,
-    shinycssloaders,
-    ggplot2 (>= 3.0),
-    seewave,
-    dplyr,
-    tidyr,
-    patchwork
-Depends: 
-    R (>= 2.10),
-    shinyBS
+  shiny (>= 1.0.0),
+  bioacoustics,
+  shinyjs,
+  shinyBS,
+  ggplot2 (>= 3.0),
+  seewave,
+  dplyr,
+  tidyr,
+  patchwork,
+  plotly,
+  tuneR,
+  warbleR,
+  DT,
+  bslib,
+  colourpicker,
+  cowplot,
+  htmlwidgets,
+  htmltools,
+  magrittr,
+  purrr,
+  scales,
+  tibble,
+  writexl,
+  shinycssloaders
 Suggests: 
-    knitr,
-    rmarkdown
+  knitr,
+  rmarkdown,
+  markdown
 VignetteBuilder: knitr
+URL: https://github.com/naturewaves/Rthoptera
+BugReports: https://github.com/naturewaves/Rthoptera/issues 

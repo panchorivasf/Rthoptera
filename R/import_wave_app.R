@@ -7,6 +7,7 @@
 #' @return This function launches a Shiny app for importing audio files. The processed wave object is saved to the global environment with the name provided by the user.
 #' @export
 #' @import shiny
+#' @importFrom htmltools HTML
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom tuneR channel
 #' @importFrom bioacoustics read_audio

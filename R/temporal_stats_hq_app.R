@@ -8,6 +8,7 @@
 #' @import shiny
 #' @import shinyBS
 #' @import dplyr
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom plotly plot_ly add_lines layout renderPlotly

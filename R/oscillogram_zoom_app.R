@@ -139,8 +139,6 @@ oscillogram_zoom_app <- function(dark.mode = TRUE) {
     plotTriggered <- reactiveVal(FALSE)
 
     wave_df <- function(wave, norm = TRUE){
-      library(dplyr)
-      library(tibble)
 
       if(norm){
         wave <- tuneR::normalize(object = wave, unit = "1", center = TRUE)
@@ -452,7 +450,7 @@ oscillogram_zoom_app <- function(dark.mode = TRUE) {
       },
       content = function(file) {
 
-        showPageSpinner(type = 1)
+        # showPageSpinner(type = 1)
 
         # If a temporary image path exists, use it instead of regenerating the plots
         if (!is.null(tempImagePath())) {
@@ -468,7 +466,7 @@ oscillogram_zoom_app <- function(dark.mode = TRUE) {
           ggsave(file, combinedPlot, width = input$imgWidth, height = total_height, units = "in", dpi = 300, bg = bg)
         }
 
-        hidePageSpinner()
+        # hidePageSpinner()
       }
     )
 

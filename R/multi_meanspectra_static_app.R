@@ -6,9 +6,11 @@
 #' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #'
 #' @return A Shiny app for visualizing wave oscillograms and mean spectra.
+#'
 #' @import shiny
 #' @import patchwork
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom seewave meanspec
 #' @importFrom tibble tibble

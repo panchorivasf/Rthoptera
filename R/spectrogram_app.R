@@ -7,6 +7,7 @@
 #' @return A Shiny app for visualizing and saving spectrograms of audio wave objects.
 #' @import shiny
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom seewave spectro meanspec

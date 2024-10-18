@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/naturewaves/Rthoptera/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/naturewaves/Rthoptera/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 *Rthoptera* is an R package that provides interactive Shiny applications for standard analysis of insect sounds. The package is intended to be used on high signal-to-noise recordings, helping researchers make standardized measurements and plots. It offers functions for pre-processing, spectral and temporal analysis, as well as several interactive and static visualizations.
 
 ## Pre-processing

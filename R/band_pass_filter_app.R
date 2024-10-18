@@ -17,6 +17,7 @@
 #' # 3. Apply the filter and save the new wave object.
 #' }
 #' @import shiny
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom plotly plotlyOutput plot_ly layout config style add_ribbons

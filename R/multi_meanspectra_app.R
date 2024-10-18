@@ -7,7 +7,9 @@
 #' @return A Shiny app for visualizing and downloading multi-selection mean spectra and oscillograms.
 #' @import shiny
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
+#' @importFrom htmltools HTML
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom dplyr mutate filter pull row_number
 #' @importFrom tibble tibble

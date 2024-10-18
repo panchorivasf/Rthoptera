@@ -18,7 +18,6 @@ A tibble data frame.
 Extract the waveform values as a table
 }
 \examples{
-wave_df(wave, norm = TRUE)
  \dontrun{
 data(coryphoda)
 wave_df(coryphoda)

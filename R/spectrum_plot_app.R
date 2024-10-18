@@ -7,6 +7,7 @@
 #' @return A Shiny app that generates and visualizes the spectrum plot of an audio wave object.
 #' @import shiny
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom shinyjs useShinyjs extendShinyjs runjs
 #' @importFrom seewave meanspec
 #' @importFrom magrittr %>%

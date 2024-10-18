@@ -13,8 +13,10 @@
 #' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #'
 #' @return A Shiny app for analyzing temporal statistics of acoustic waveforms.
+#'
 #' @import shiny
 #' @import shinyBS
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom plotly plot_ly add_lines layout renderPlotly add_markers
@@ -422,6 +424,7 @@ temporal_stats_lq_app <- function(launch.browser = FALSE) {
                fluidRow(
                  column(12,
                         withSpinner(plotlyOutput("audioPlot")),
+                        DTOutput("summary_data"),
                         DTOutput("motif_data"),
                         DTOutput("train_data"),
                         DTOutput("peak_data"),
@@ -491,6 +494,21 @@ temporal_stats_lq_app <- function(launch.browser = FALSE) {
                margin = list(l = 80, r = 0, t = 80, b = 80))
     })
 
+
+    output$summary_data <- renderDT({
+      req(result())
+      datatable(result()$summary_data,
+                caption = htmltools::tags$caption(
+                  style = "caption-side: top; text-align: left;",
+                  class = "caption-top",
+                  "Summary Data"
+                ),
+                options = list(
+                  pageLength = 1, lengthChange = FALSE, searching = FALSE, paging = FALSE, info = FALSE,
+                  columnDefs = list(list(orderable = FALSE, targets = "_all"))
+                ))
+    })
+
     output$motif_data <- renderDT({
       req(result())
       datatable(result()$motif_data,
@@ -539,7 +557,7 @@ temporal_stats_lq_app <- function(launch.browser = FALSE) {
                 caption = htmltools::tags$caption(
                   style = "caption-side: top; text-align: left;",
                   class = "caption-top",
-                  "Parameter Data"
+                  "Parameters"
                 ),
                 options = list(
                   pageLength = 1, lengthChange = FALSE, searching = FALSE, paging = FALSE, info = FALSE,
@@ -556,6 +574,7 @@ temporal_stats_lq_app <- function(launch.browser = FALSE) {
         req(result())
         # Collect all data tables
         data_list <- list(
+          "Summary Data" = result()$summary_data,
           "Motif Data" = result()$motif_data,
           "Train Data" = result()$train_data,
           "Peak Data" = result()$peak_data,

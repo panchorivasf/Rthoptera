@@ -7,6 +7,7 @@
 #' @return A Shiny app for visualizing, customizing, and downloading color-coded oscillograms.
 #' @import shiny
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom colourpicker colourInput
@@ -198,8 +199,6 @@ colorcode_oscillogram_app <- function(launch.browser = FALSE) {
   server <- function(input, output, session) {
 
     wave_df <- function(wave, norm = TRUE){
-      library(dplyr)
-      library(tibble)
 
       if(norm){
         wave <- tuneR::normalize(object = wave, unit = "1", center = TRUE)

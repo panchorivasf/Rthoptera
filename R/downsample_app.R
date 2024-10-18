@@ -4,13 +4,10 @@
 #'
 #' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #'
-#' @param input Internal Shiny parameter for handling input values.
-#' @param output Internal Shiny parameter for rendering outputs in the app.
-#' @param session Internal Shiny parameter for managing the app session.
-#'
 #' @return A Shiny app interface for downsampling and visualizing audio wave objects.
 #' @export
 #' @import shiny
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom plotly plotlyOutput renderPlotly plot_ly add_ribbons layout config style
@@ -351,8 +348,6 @@ downsample_app <- function(launch.browser = FALSE) {
         footer = modalButton("Close")
       ))
     })
-
-
 
 
     # Stop app when the tab is closed with the "X" button

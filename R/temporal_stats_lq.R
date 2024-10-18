@@ -223,8 +223,8 @@ temporal_stats_lq <- function(wave,
 
   # Create tibble for motif measurements
   motif_data <- train_data %>%
-    group_by(specimen.id, motif.id) %>%
-    summarize(
+    group_by(motif.id) %>%
+    reframe(
       motif.start = min(train.start),
       motif.end = max(train.end),
       motif.dur = round(motif.end - motif.start,4),
@@ -240,16 +240,11 @@ temporal_stats_lq <- function(wave,
     ) %>%
     mutate(
       train.rate = round((n.trains-1)/motif.dur)
-      # tem.exc.mean = round(mean(tem.exc),3),
-      # tem.exc.var = round(var(tem.exc),3),
-      # tem.exc.sd = round(sd(tem.exc),3),
-      # dyn.exc.mean = round(mean(dyn.exc),3),
-      # dyn.exc.var = round(var(dyn.exc),3),
-      # dyn.exc.sd = round(sd(dyn.exc),3)
     ) %>%
-    ungroup() %>%
     relocate(train.rate, .after = n.trains) %>%
-    relocate(c(tem.exc.mean:dyn.exc.sd), .after = motif.id)
+    relocate(c(tem.exc.mean:dyn.exc.sd), .after = motif.id) %>%
+    ungroup()
+
 
 
   motif_data <- motif_data %>%
@@ -293,8 +288,18 @@ temporal_stats_lq <- function(wave,
            pci = round((props.ent * props.cv + sqrt(n.trains)) /  (sqrt(motif.dur) + 1), 3)
     ) %>%
     ungroup() %>%
-    select(specimen.id, pci, everything(), -proportions, proportions)
+    select(specimen.id, motif.id, pci, everything(), -proportions, proportions)
 
+  summary_data <- tibble(
+    mean.pci = round(mean(motif_data$pci),2),
+    mean.tem.exc = round(mean(motif_data$tem.exc.mean),2),
+    mean.dyn.exc = round(mean(motif_data$dyn.exc.mean),2),
+    mean.motif.dur = round(mean(motif_data$motif.dur),2),
+    mean.n.trains = round(mean(motif_data$n.trains),2),
+    mean.train.rate = round(mean(motif_data$train.rate),2),
+    mean.duty.cycle = round(mean(motif_data$duty.cycle),2),
+    mean.entropy = round(mean(motif_data$props.ent),2)
+  )
   # Prepare annotations for the plot
   annotations <- list(
     list(
@@ -419,6 +424,7 @@ temporal_stats_lq <- function(wave,
   p
 
   return(list(plot = p,
+              summary_data = summary_data,
               motif_data = motif_data,
               train_data = train_data,
               peak_data = peak_data,

@@ -6,6 +6,7 @@
 #' @param wave An object of class `Wave` containing the audio data to be analyzed.
 #' @param freq.res The frequency resolution to be used for the frequency spectrum analysis. Use this argument consistently for standardized measurements across recordings with different sampling rate. Default is 10 Hz per frequency bin.
 #' @param fun Character string indicating the summary function to be applied for computing the mean spectrum. Default is `'mean'`. Other options include `'median'` for median, `'sd'` for standard deviation, or `'var'` for variance.
+#' @param wn Window filtering function. Choices are:  bartlett, blackman, flattop, hamming, hanning, or rectangle. Default is `hanning`.
 #'
 #' @return A list with two tibbles. The first tibble "spec_df" with two columns: `frequency` and `amplitude`, and the second tibble "params_df" contains all the relevant parameters used to create the spectrum.
 #' The `frequency` column contains the frequencies in Hertz (Hz), and the `amplitude` column contains the corresponding amplitude values.

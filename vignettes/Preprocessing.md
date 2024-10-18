@@ -12,9 +12,7 @@ vignette: >
 
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## When and how to preprocess your recordings
 
@@ -24,19 +22,22 @@ DISCLAIMER: R is not optimized for rendering large amounts of data in plots. If 
 
 Run this code in R to open the `import_wave_app`, which will allow you to select, name and import sound files as R objects of class "Wave". This app is based on `bioacoustics`' `read_audio()` function.
 
-```{r, echo=TRUE, eval = FALSE}
+
+``` r
 library(Rthoptera)
 import_wave_app()
 ```
 
 In this guide, we will work with the example Wave objects included in the package. To load all of them, run this:
 
-```{r, echo=TRUE, eval=FALSE}
+
+``` r
 load_wave_data()
 ```
 
 If occasionally you want to work with a single file of the included data, you can run, for example:
-```{r, echo=TRUE, eval=FALSE}
+
+``` r
 data("tettigonia")
 ```
 which will make the song of *Tettigonia cantans* available in the R environment. 
@@ -48,7 +49,8 @@ As a rule of thumb, if you want to analyze several snippets of a recording separ
 ### Trim
 This app is based on `tuneR`'s `extractWave()` function. To trim a Wave, run the `trim_app()`, plot the oscillogram, select the portion you want to save, type a name for it, and save it. You can overwrite the original Wave by assigning the same name for the selection (this will not have any effect outside the R environment), or assign a new name to create a new Wave object.If you want to save several snippets of the same length, just drag the first selection to the desired position and assign a new name before saving. 
 
-```{r, echo=TRUE, eval = FALSE}
+
+``` r
 trim_app()
 ```
 
@@ -58,7 +60,8 @@ For the downsampling and band-passing examples, we will use the included "platyc
 This app is based on `seewave`'s `resamp()` function.  
 If you think the sampling rate used to record an insect was unnecessarily high, use the `downsample_app()` to verify this and downsample if appropriate. By design, the minimum Nyquist allowed for this in `Rthoptera` is 48 kHz. The other two options are 96 kHz, and 192 kHz. For most crickets, 48 kHz Nyquist will suffice, but caution must be applied. Once the app has launched, select the Wave you want to analyze and click "Plot". Now you can assess what is the maximum frequency of interest (MaxFOI) by hovering over the Mean Power Spectrum. If the MaxFOI is less than half of the Nyquist (maximum visible frequency in the plot), you can consider downsampling. Select the closest available value above the MaxFOI and click "Downsample". 
 
-```{r, echo=TRUE, eval = FALSE}
+
+``` r
 downsample_app()
 ```
 
@@ -66,7 +69,8 @@ downsample_app()
 
 This app is based on `seewave`'s `ffilter()` function.  If you believe that your recording has low-frequency noise or non-target (e.g., other species) sounds, you should consider applying a band-pass filter (BPF). The `band_pass_filter_app` allows you to verify the presence of non-target sound and its range, helping to choose an appropriate BPF. A Mean Power Spectrum view should be used to determine whether a non-target sound or noise is above the -20dB threshold typically employed to assess the bandwidth of the signal of interest (SOI). If non-target sound is detected, the user should choose a proper combination of high-pass filter and low-pass filter values which will significantly attenuate the sounds below outside this range, allowing for accurate measure and plot the SOI. Although it takes longer to render, the spectrogram view may be necessary for field recordings where multiple species are detected, as it allows for visual discrimination of the SOI from non-target signals by inspecting their temporal patterns, which are not visible in the mean power spectrum. 
 
-```{r, echo=TRUE, eval = FALSE}
+
+``` r
 band_pass_filter_app()
 ```
 

@@ -8,6 +8,7 @@
 #' @export
 #' @import shiny
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom seewave oscillo
 #' @importFrom tuneR extractWave

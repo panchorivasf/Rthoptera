@@ -8,12 +8,6 @@ downsample_app(launch.browser = FALSE)
 }
 \arguments{
 \item{launch.browser}{Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.}
-
-\item{input}{Internal Shiny parameter for handling input values.}
-
-\item{output}{Internal Shiny parameter for rendering outputs in the app.}
-
-\item{session}{Internal Shiny parameter for managing the app session.}
 }
 \value{
 A Shiny app interface for downsampling and visualizing audio wave objects.

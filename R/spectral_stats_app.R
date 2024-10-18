@@ -5,9 +5,11 @@
 #' @param launch.browser Logical. If TRUE, the app will automatically open in the default web browser. Defaults to FALSE.
 #'
 #' @return A Shiny app for analyzing and visualizing spectral statistics of audio wave objects.
+#'
 #' @import shiny
 #' @import shinyBS
 #' @import ggplot2
+#' @importFrom htmltools HTML
 #' @importFrom magrittr %>%
 #' @importFrom shinyjs useShinyjs extendShinyjs
 #' @importFrom seewave meanspec sh
@@ -15,6 +17,8 @@
 #' @importFrom plotly plot_ly add_trace layout add_markers renderPlotly
 #' @importFrom DT DTOutput renderDT datatable
 #' @importFrom htmlwidgets saveWidget
+#' @importFrom utils write.csv
+
 #' @export
 #'
 #' @examples
@@ -427,10 +431,6 @@ spectral_stats_app <- function(launch.browser = FALSE) {
                           sound.type = "Call 1",
                           temp = NULL,
                           hpf = NULL) {
-      require(tuneR)
-      require(seewave)
-      require(dplyr)
-      require(plotly)
 
       ampMax <- as.numeric(ampMax)
 

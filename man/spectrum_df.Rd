@@ -12,6 +12,8 @@ spectrum_df(wave, freq.res = 10, fun = "mean", wn = "hanning")
 \item{freq.res}{The frequency resolution to be used for the frequency spectrum analysis. Use this argument consistently for standardized measurements across recordings with different sampling rate. Default is 10 Hz per frequency bin.}
 
 \item{fun}{Character string indicating the summary function to be applied for computing the mean spectrum. Default is `'mean'`. Other options include `'median'` for median, `'sd'` for standard deviation, or `'var'` for variance.}
+
+\item{wn}{Window filtering function. Choices are:  bartlett, blackman, flattop, hamming, hanning, or rectangle. Default is `hanning`.}
 }
 \value{
 A list with two tibbles. The first tibble "spec_df" with two columns: `frequency` and `amplitude`, and the second tibble "params_df" contains all the relevant parameters used to create the spectrum.
