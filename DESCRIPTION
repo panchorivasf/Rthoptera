@@ -40,9 +40,11 @@ Imports:
   writexl,
   shinycssloaders
 Suggests: 
-  knitr,
-  rmarkdown,
-  markdown
+    knitr,
+    rmarkdown,
+    markdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/naturewaves/Rthoptera
 BugReports: https://github.com/naturewaves/Rthoptera/issues 
+Config/testthat/edition: 3

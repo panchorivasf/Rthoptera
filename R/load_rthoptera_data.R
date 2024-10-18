@@ -5,11 +5,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' load_wave_data()
+#' load_rthoptera_data()
 #' }
-load_wave_data <- function() {
+load_rthoptera_data <- function() {
   # List all data items in the package
-  data_list <- data(package = "Rthoptera")$results[, "Item"]
+  data_list <- data(package = "RthopteraSounds")$results[, "Item"]
 
   # Load each data item
   for (data_name in data_list) {
